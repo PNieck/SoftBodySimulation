@@ -4,7 +4,6 @@
 #include "visualization/grid.hpp"
 #include "visualization/renderObject.hpp"
 #include "visualization/shaders/stdShader.hpp"
-#include "visualization/meshWithNormals.hpp"
 #include "visualization/framebuffer.hpp"
 
 #include "../model/simulationProperties.hpp"
@@ -48,11 +47,10 @@ private:
 
     Framebuffer framebuffer;
 
-    Mesh simulationArea;
+    RenderObject simulationArea;
+    RenderObject steeringCube;
 
     SimulationProperties properties;
 
     StdShader shader;
-
-    void UpdateSimulationAreaMesh();
 };

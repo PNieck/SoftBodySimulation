@@ -4,6 +4,8 @@
 #include "glm/mat4x4.hpp"
 #include "glm/vec4.hpp"
 
+#include "shaders/stdShader.hpp"
+
 
 class RenderObject {
 public:
@@ -27,14 +29,26 @@ public:
     void SetScale(const glm::vec3& newScale)
         { scale = newScale; }
 
+    void SetScale(const float newScale)
+        { scale = glm::vec3(newScale); }
+
     void UpdateMesh(
         const std::vector<float>& vertices,
-        const std::vector<uint32_t>& indices
+        const std::vector<uint32_t>& indices,
+        const Mesh::Type meshType
     )
-        { mesh.Update(vertices, indices); }
+        { mesh.Update(vertices, indices, meshType); }
+
+    const Mesh& GetMesh() const
+        { return mesh; }
+
+    Mesh& GetMesh()
+        { return mesh; }
 
     void UseMesh() const
         { mesh.Use(); }
+
+    void Render(const StdShader& shader, const glm::mat4& cameraMtx) const;
 
     [[nodiscard]]
     int MeshElements() const
@@ -42,6 +56,7 @@ public:
 
 private:
     Mesh mesh;
+
     glm::vec4 color;
     glm::vec3 scale;
     glm::vec3 translation;

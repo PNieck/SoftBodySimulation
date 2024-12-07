@@ -3,7 +3,7 @@
 #include "shader.hpp"
 
 
-class GridShader: private Shader {
+class GridShader: public Shader {
 public:
     GridShader():
         Shader(
@@ -22,7 +22,4 @@ public:
 
     void SetProjectionMatrix(const glm::mat4& projMtx) const
         { SetMatrix4("proj", projMtx); }
-
-    void Use() const
-        { Shader::Use(); }
 };

@@ -4,7 +4,7 @@
 
 #include <numbers>
 
-#include <simulation/views/visualization/meshLoader.hpp>
+#include <simulation/views/visualization/meshFactory.hpp>
 
 #include "imgui.h"
 
@@ -28,7 +28,10 @@ Visualization::Visualization(const int xResolution, const int yResolution):
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    UpdateSimulationAreaMesh();
+    MeshFactory::CubeWireframe(simulationArea.GetMesh());
+    MeshFactory::CubeWireframe(steeringCube.GetMesh());
+
+    SetSimulationProperties(SimulationProperties());
 }
 
 
@@ -56,10 +59,8 @@ void Visualization::Render()
     grid.Render(view, projection);
 
     shader.Use();
-    shader.SetColor(glm::vec4(0.969f, 0.957f, 0.212f, 1.f));
-    shader.SetMVP(cameraMtx);
-    simulationArea.Use();
-    glDrawElements(GL_LINE_STRIP, simulationArea.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+    simulationArea.Render(shader, cameraMtx);
+    steeringCube.Render(shader, cameraMtx);
 
     Framebuffer::UseDefault();
 
@@ -74,14 +75,7 @@ void Visualization::RotateCamera(const float x, const float y)
 {
     const auto oldPos = camera.GetPosition();
 
-    auto rotation = glm::mat4(
-        1.f, 0.f, 0.f, 0.f,
-        0.f, 1.f, 0.f, 0.f,
-        0.f, 0.f, 1.f, 0.f,
-        0.f, 0.f, 0.f, 1.f
-    );
-
-    rotation = glm::rotate(rotation, x, glm::vec3(0.f, 1.f, 0.f));
+    auto rotation = glm::rotate(glm::mat4(1.f), x, glm::vec3(0.f, 1.f, 0.f));
 
     const auto axis = glm::cross(oldPos, glm::vec3(0.f, 1.f, 0.f));
     rotation = glm::rotate(rotation, y, axis);
@@ -94,38 +88,7 @@ void Visualization::RotateCamera(const float x, const float y)
 void Visualization::SetSimulationProperties(const SimulationProperties &simProperties) {
     properties = simProperties;
 
-
-}
-
-
-void Visualization::UpdateSimulationAreaMesh() {
-    const float coord = properties.simulationAreaEdgeLength / 2.f;
-
-    const std::vector<float> vertices = {
-        // Upper vertices
-         coord, coord,  coord,
-        -coord, coord,  coord,
-        -coord, coord, -coord,
-         coord, coord, -coord,
-
-        // Lower vertices
-         coord, -coord,  coord,
-        -coord, -coord,  coord,
-        -coord, -coord, -coord,
-         coord, -coord, -coord
-    };
-
-    constexpr uint32_t primitiveRestart = std::numeric_limits<uint32_t>::max();
-
-    const std::vector<uint32_t> indices = {
-        0, 1, 2, 3, 0, primitiveRestart,  // Upper part
-        4, 5, 6, 7, 4, primitiveRestart, // Lower part
-        0, 4, primitiveRestart,
-        1, 5, primitiveRestart,
-        2, 6, primitiveRestart,
-        3, 7, primitiveRestart
-    };
-
-    simulationArea.Update(vertices, indices);
+    simulationArea.SetScale(simProperties.simulationAreaEdgeLength);
+    steeringCube.SetScale(simProperties.steeringCubeEdgeLength);
 }
 

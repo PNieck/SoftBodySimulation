@@ -18,3 +18,11 @@ glm::mat4 RenderObject::ModelMatrix() const
     result = glm::scale(result, scale);
     return  result * rotationMatrix;
 }
+
+
+void RenderObject::Render(const StdShader &shader, const glm::mat4& cameraMtx) const {
+    shader.SetColor(color);
+    shader.SetMVP(cameraMtx * ModelMatrix());
+    UseMesh();
+    glDrawElements(mesh.GetType(), mesh.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+}

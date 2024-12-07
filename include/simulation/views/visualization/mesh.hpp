@@ -7,19 +7,28 @@
 
 class Mesh {
 public:
+    enum Type {
+        Triangles = GL_TRIANGLES,
+        Lines = GL_LINES,
+        LinesStrip = GL_LINE_STRIP,
+    };
+
     Mesh();
     Mesh(Mesh&& mesh) = default;
     Mesh(Mesh& mesh) = delete;
     ~Mesh();
 
-    void Update(const std::vector<float>& vertices, const std::vector<uint32_t>& indices);
+    void Update(const std::vector<float>& vertices, const std::vector<uint32_t>& indices, Type meshType);
 
     [[nodiscard]]
     int GetElementsCnt() const
-    { return elementsCnt; }
+        { return elementsCnt; }
 
     void Use() const
-    { glBindVertexArray(VAO); }
+        { glBindVertexArray(VAO); }
+
+    Type GetType() const
+        { return type; }
 
     Mesh& operator=(Mesh& mesh) = delete;
 
@@ -33,5 +42,6 @@ private:
     /// @brief OpenGl element buffer object
     unsigned int EBO;
 
+    Type type;
     int elementsCnt;
 };

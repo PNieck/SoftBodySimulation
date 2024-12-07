@@ -11,8 +11,6 @@
 
 class Shader {
 public:
-    unsigned int id;
-
     Shader(
         const char* vertexPath,
         const char* fragmentPath,
@@ -28,6 +26,8 @@ public:
     void Use() const
         { glUseProgram(id); }
 
+    Shader& operator=(Shader&) = delete;
+protected:
     void SetBool(const std::string &name, bool value) const;
     void SetInt(const std::string &name, int value) const;
     void SetFloat(const std::string &name, float value) const;
@@ -35,8 +35,9 @@ public:
     void SetVec4(const std::string& name, const glm::vec4& vec) const;
     void SetMatrix4(const std::string &name, const glm::mat4& matrix) const;
 
-    Shader& operator=(Shader&) = delete;
 private:
+    unsigned int id;
+
     [[nodiscard]]
     int FindUniformLocation(const std::string &name) const;
 
