@@ -7,6 +7,8 @@
 #include "visualization/meshWithNormals.hpp"
 #include "visualization/framebuffer.hpp"
 
+#include "../model/simulationProperties.hpp"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
@@ -28,13 +30,15 @@ public:
     void SetCameraPosition(const glm::vec3& position)
         { camera.SetPosition(position); }
 
-    [[nodiscard]]
-    static const char* WindowName()
-        { return "Visualization"; }
+    void SetSimulationProperties(const SimulationProperties& simProperties);
 
     [[nodiscard]]
     bool IsMouseOverWindow() const
         { return mouseIsOver; }
+
+    [[nodiscard]]
+    static const char* WindowName()
+        { return "Visualization"; }
 
 private:
     bool mouseIsOver = false;
@@ -44,5 +48,11 @@ private:
 
     Framebuffer framebuffer;
 
+    Mesh simulationArea;
+
+    SimulationProperties properties;
+
     StdShader shader;
+
+    void UpdateSimulationAreaMesh();
 };

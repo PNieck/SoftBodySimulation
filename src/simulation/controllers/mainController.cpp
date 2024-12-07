@@ -7,7 +7,7 @@
 
 MainController::MainController(GLFWwindow *window):
     optionsPanel(*this),
-    visualization(800, 600)
+    visualization(1280, 920)
 {
     const auto glsl_version = "#version 410";
     IMGUI_CHECKVERSION();

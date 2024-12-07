@@ -1,6 +1,6 @@
 #pragma once
 
-#include "indexedMesh.hpp"
+#include "mesh.hpp"
 #include "glm/mat4x4.hpp"
 #include "glm/vec4.hpp"
 
@@ -30,7 +30,8 @@ public:
     void UpdateMesh(
         const std::vector<float>& vertices,
         const std::vector<uint32_t>& indices
-    );
+    )
+        { mesh.Update(vertices, indices); }
 
     void UseMesh() const
         { mesh.Use(); }
@@ -40,7 +41,7 @@ public:
         { return mesh.GetElementsCnt(); }
 
 private:
-    IndexedMesh mesh;
+    Mesh mesh;
     glm::vec4 color;
     glm::vec3 scale;
     glm::vec3 translation;
