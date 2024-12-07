@@ -1,0 +1,10 @@
+# Build files
+[Bb]uild/
+cmake-build*
+
+# Code editors settings
+.vscode/
+.idea/
+
+# Temporary directory used during development
+tmp/
