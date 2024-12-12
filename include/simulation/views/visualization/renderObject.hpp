@@ -1,10 +1,12 @@
 #pragma once
 
 #include "mesh.hpp"
+#include "vertex.hpp"
 #include "glm/mat4x4.hpp"
 #include "glm/vec4.hpp"
 
 #include "shaders/stdShader.hpp"
+#include "shaders/phongShader.hpp"
 
 
 class RenderObject {
@@ -13,6 +15,9 @@ public:
 
     [[nodiscard]]
     glm::mat4 ModelMatrix() const;
+
+    [[nodiscard]]
+    glm::mat4 ModelMatrixInverse() const;
 
     void Rotate(const glm::mat4& mat)
         { rotationMatrix *= mat; }
@@ -32,8 +37,9 @@ public:
     void SetScale(const float newScale)
         { scale = glm::vec3(newScale); }
 
+    template <Vertex v>
     void UpdateMesh(
-        const std::vector<float>& vertices,
+        const std::vector<v>& vertices,
         const std::vector<uint32_t>& indices,
         const Mesh::Type meshType
     )
@@ -50,6 +56,8 @@ public:
         { mesh.Use(); }
 
     void Render(const StdShader& shader, const glm::mat4& cameraMtx) const;
+
+    void Render(const PhongShader& shader) const;
 
     [[nodiscard]]
     int MeshElements() const

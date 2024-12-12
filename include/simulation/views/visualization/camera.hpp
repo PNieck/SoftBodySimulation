@@ -39,6 +39,10 @@ public:
     void SetViewportSize(const int width, const int height)
         { parameters.viewportWidth = width; parameters.viewportHeight = height; }
 
+    [[nodiscard]]
+    const CameraParameters& GetParameters() const
+        { return parameters; }
+
 private:
     glm::vec3 position;
     glm::vec3 up;

@@ -4,6 +4,8 @@
 
 #include <glad/glad.h>
 
+#include "vertex.hpp"
+
 
 class Mesh {
 public:
@@ -18,7 +20,21 @@ public:
     Mesh(Mesh& mesh) = delete;
     ~Mesh();
 
-    void Update(const std::vector<float>& vertices, const std::vector<uint32_t>& indices, Type meshType);
+    template <Vertex v, class Allocator>
+    void Update(const std::vector<v, Allocator>& vertices, const std::vector<uint32_t>& indices, const Type meshType) {
+        Use();
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(v) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indices.size(), indices.data(), GL_STATIC_DRAW);
+
+        v::SetupAttributes();
+
+        type = meshType;
+        elementsCnt = indices.size();
+    }
 
     [[nodiscard]]
     int GetElementsCnt() const
@@ -27,6 +43,7 @@ public:
     void Use() const
         { glBindVertexArray(VAO); }
 
+    [[nodiscard]]
     Type GetType() const
         { return type; }
 
@@ -34,14 +51,14 @@ public:
 
 private:
     /// @brief OpenGl vector array object
-    unsigned int VAO;
+    unsigned int VAO = 0;
 
     /// @brief OpenGl vector buffer object
-    unsigned int VBO;
+    unsigned int VBO = 0;
 
     /// @brief OpenGl element buffer object
-    unsigned int EBO;
+    unsigned int EBO = 0;
 
-    Type type;
-    int elementsCnt;
+    Type type = Triangles;
+    int elementsCnt = 0;
 };

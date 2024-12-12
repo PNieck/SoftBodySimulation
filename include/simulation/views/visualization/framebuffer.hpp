@@ -27,4 +27,5 @@ public:
 private:
     unsigned int fbo = 0;
     unsigned int colorTexture = 0;
+    unsigned int depthRenderbuffer = 0;
 };

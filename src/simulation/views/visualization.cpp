@@ -28,39 +28,47 @@ Visualization::Visualization(const int xResolution, const int yResolution):
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    MeshFactory::CubeWireframe(simulationArea.GetMesh());
-    MeshFactory::CubeWireframe(steeringCube.GetMesh());
-    MeshFactory::LoadFromFile(sphere.GetMesh(), "../../models/icosphere.obj");
+    glEnable(GL_DEPTH_TEST);
+
+    MeshFactory::CubeWireframe<PositionVertex>(simulationArea.GetMesh());
+    MeshFactory::CubeWireframe<PositionVertex>(steeringCube.GetMesh());
+    MeshFactory::LoadFromFile<PosNormalVertex>(sphere.GetMesh(), "../../models/icosphere.obj");
     sphere.SetScale(0.01f);
 }
 
 
 void Visualization::Render(const SpringGraph& springGraph)
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    const auto view = camera.ViewMatrix();
-    const auto projection = camera.ProjectionMatrix();
-
-    const auto cameraMtx = projection * view;
-
     ImGui::Begin(WindowName());
 
     mouseIsOver = ImGui::IsWindowHovered();
 
     framebuffer.Use();
 
-    glClear(GL_COLOR_BUFFER_BIT);
-    grid.Render(view, projection);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shader.Use();
+
+    const auto view = camera.ViewMatrix();
+    const auto projection = camera.ProjectionMatrix();
+
+    const auto cameraMtx = projection * view;
     simulationArea.Render(shader, cameraMtx);
     steeringCube.Render(shader, cameraMtx);
 
+    phongShader.Use();
+    phongShader.SetCameraPosition(camera.GetPosition());
+    phongShader.SetViewMatrix(view);
+    phongShader.SetProjectionMatrix(projection);
+    phongShader.SetLightPosition(glm::vec3(10.0f, 10.f, 10.f));
+
     for (const auto& point: springGraph.MaterialPoints()) {
         sphere.SetPosition(point.position);
-        sphere.Render(shader, cameraMtx);
+        sphere.Render(phongShader);
     }
+
+    const auto camParams = camera.GetParameters();
+    grid.Render(view, projection, camParams.nearPlane, camParams.farPlane);
 
     Framebuffer::UseDefault();
 
@@ -75,10 +83,10 @@ void Visualization::RotateCamera(const float x, const float y)
 {
     const auto oldPos = camera.GetPosition();
 
-    auto rotation = glm::rotate(glm::mat4(1.f), x, glm::vec3(0.f, 1.f, 0.f));
+    auto rotation = rotate(glm::mat4(1.f), x, glm::vec3(0.f, 1.f, 0.f));
 
-    const auto axis = glm::cross(oldPos, glm::vec3(0.f, 1.f, 0.f));
-    rotation = glm::rotate(rotation, y, axis);
+    const auto axis = cross(oldPos, glm::vec3(0.f, 1.f, 0.f));
+    rotation = rotate(rotation, y, axis);
 
     const auto newPos = rotation * glm::vec4(oldPos, 1.f);
     camera.SetPosition(glm::vec3(newPos.x, newPos.y, newPos.z));

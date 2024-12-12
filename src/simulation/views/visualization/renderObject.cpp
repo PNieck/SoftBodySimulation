@@ -14,9 +14,16 @@ RenderObject::RenderObject():
 
 glm::mat4 RenderObject::ModelMatrix() const
 {
-    auto result = glm::translate(glm::mat4(1.f), translation);
+    auto result = translate(glm::mat4(1.f), translation);
     result = glm::scale(result, scale);
     return  result * rotationMatrix;
+}
+
+
+glm::mat4 RenderObject::ModelMatrixInverse() const {
+    auto result = transpose(rotationMatrix);
+    result = glm::scale(result, glm::vec3(1.f/scale.x, 1.f/scale.y, 1.f/scale.z));
+    return translate(result, -translation);
 }
 
 
@@ -24,5 +31,16 @@ void RenderObject::Render(const StdShader &shader, const glm::mat4& cameraMtx) c
     shader.SetColor(color);
     shader.SetMVP(cameraMtx * ModelMatrix());
     UseMesh();
+    glDrawElements(mesh.GetType(), mesh.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+}
+
+
+void RenderObject::Render(const PhongShader &shader) const {
+    shader.SetColor(color);
+    shader.SetModelMatrix(ModelMatrix());
+    shader.SetModelMatrixInverse(ModelMatrixInverse());
+
+    UseMesh();
+
     glDrawElements(mesh.GetType(), mesh.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
 }
