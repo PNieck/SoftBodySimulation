@@ -3,11 +3,12 @@
 
 Grid::Grid()
 {
-    const std::vector vertices = {
-        1.0f,  1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,
-       -1.0f, -1.0f, 0.0f,
-       -1.0f,  1.0f, 0.0f
+    // Vertices of a square on XY plane
+    const std::vector<PositionVertex> vertices = {
+        {  1.0f,  1.0f, 0.0f },
+        {  1.0f, -1.0f, 0.0f },
+        { -1.0f, -1.0f, 0.0f },
+        { -1.0f,  1.0f, 0.0f }
    };
 
     const std::vector<uint32_t> indices = {
@@ -16,14 +17,14 @@ Grid::Grid()
     };
 
     gridMesh.Use();
-    gridMesh.Update(vertices, indices);
+    gridMesh.Update<PositionVertex>(vertices, indices, Mesh::Triangles);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 
-void Grid::Render(const glm::mat4& view, const glm::mat4& projection, float nearPlane, float farPlane) const
+void Grid::Render(const glm::mat4& view, const glm::mat4& projection, const float nearPlane, const float farPlane) const
 {
     shader.Use();
 

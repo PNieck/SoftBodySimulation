@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shaders/gridShader.hpp"
-#include "indexedMesh.hpp"
+#include "mesh.hpp"
 
 
 class Grid {
@@ -12,5 +12,5 @@ public:
 
 private:
     GridShader shader;
-    IndexedMesh gridMesh;
+    Mesh gridMesh;
 };
