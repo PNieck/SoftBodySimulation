@@ -14,3 +14,9 @@ add_custom_target(copy_shaders
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/shaders ${CMAKE_BINARY_DIR}/shaders
 )
 add_dependencies(simulation_lib copy_shaders)
+
+# Copy models
+add_custom_target(copy_models
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/models ${CMAKE_BINARY_DIR}/models
+)
+add_dependencies(simulation_lib copy_models)
