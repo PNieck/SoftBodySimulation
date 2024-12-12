@@ -6,6 +6,7 @@
 #include "glm/vec4.hpp"
 
 #include "shaders/stdShader.hpp"
+#include "shaders/phongShader.hpp"
 
 
 class RenderObject {
@@ -14,6 +15,9 @@ public:
 
     [[nodiscard]]
     glm::mat4 ModelMatrix() const;
+
+    [[nodiscard]]
+    glm::mat4 ModelMatrixInverse() const;
 
     void Rotate(const glm::mat4& mat)
         { rotationMatrix *= mat; }
@@ -52,6 +56,8 @@ public:
         { mesh.Use(); }
 
     void Render(const StdShader& shader, const glm::mat4& cameraMtx) const;
+
+    void Render(const PhongShader& shader) const;
 
     [[nodiscard]]
     int MeshElements() const

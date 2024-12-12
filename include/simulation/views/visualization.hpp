@@ -4,6 +4,7 @@
 #include "visualization/grid.hpp"
 #include "visualization/renderObject.hpp"
 #include "visualization/shaders/stdShader.hpp"
+#include "visualization/shaders/phongShader.hpp"
 #include "visualization/framebuffer.hpp"
 
 #include "../model/simulationEnvironment.hpp"
@@ -55,4 +56,5 @@ private:
     SimulationEnvironment properties;
 
     StdShader shader;
+    PhongShader phongShader;
 };
