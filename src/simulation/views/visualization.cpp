@@ -28,10 +28,11 @@ Visualization::Visualization(const int xResolution, const int yResolution):
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    MeshFactory::CubeWireframe(simulationArea.GetMesh());
-    MeshFactory::CubeWireframe(steeringCube.GetMesh());
-    MeshFactory::LoadFromFile(sphere.GetMesh(), "../../models/icosphere.obj");
     glEnable(GL_DEPTH_TEST);
+
+    MeshFactory::CubeWireframe<PositionVertex>(simulationArea.GetMesh());
+    MeshFactory::CubeWireframe<PositionVertex>(steeringCube.GetMesh());
+    MeshFactory::LoadFromFile<PosNormalVertex>(sphere.GetMesh(), "../../models/icosphere.obj");
     sphere.SetScale(0.01f);
 }
 

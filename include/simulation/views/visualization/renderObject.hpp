@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mesh.hpp"
+#include "vertex.hpp"
 #include "glm/mat4x4.hpp"
 #include "glm/vec4.hpp"
 
@@ -32,8 +33,9 @@ public:
     void SetScale(const float newScale)
         { scale = glm::vec3(newScale); }
 
+    template <Vertex v>
     void UpdateMesh(
-        const std::vector<float>& vertices,
+        const std::vector<v>& vertices,
         const std::vector<uint32_t>& indices,
         const Mesh::Type meshType
     )

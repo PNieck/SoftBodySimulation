@@ -2,59 +2,90 @@
 #include <simulation/views/visualization/meshFactory.hpp>
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
 
-void MeshFactory::LoadFromFile(Mesh& mesh, const std::string &filepath)
+constexpr auto defaultReadFlags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices;
+
+
+template <>
+void MeshFactory::LoadFromFile<PositionVertex>(Mesh& mesh, const std::string &filepath)
 {
     Assimp::Importer importer;
 
-    const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+    const aiScene* scene = importer.ReadFile(filepath, defaultReadFlags);
     if (scene == nullptr || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         throw std::runtime_error("Failed to load model");
     }
 
     const aiMesh* assimpMesh = scene->mMeshes[0];
 
-    std::vector<float> vertices;
-    vertices.reserve(assimpMesh->mNumVertices * 6);
+    std::vector<PositionVertex> vertices;
+    vertices.reserve(assimpMesh->mNumVertices);
 
     for (int i=0; i < assimpMesh->mNumVertices; i++) {
-        vertices.push_back(assimpMesh->mVertices[i].x);
-        vertices.push_back(assimpMesh->mVertices[i].y);
-        vertices.push_back(assimpMesh->mVertices[i].z);
+        vertices.emplace_back(
+            assimpMesh->mVertices[i].x,
+            assimpMesh->mVertices[i].y,
+            assimpMesh->mVertices[i].z
+        );
     }
 
-    std::vector<uint32_t> indices;
-    indices.reserve(assimpMesh->mNumFaces * 3);
-
-    for (int i=0; i < assimpMesh->mNumFaces; i++) {
-        const aiFace face = assimpMesh->mFaces[i];
-        for (int j=0; j < face.mNumIndices; j++) {
-            indices.push_back(face.mIndices[j]);
-        }
-    }
-
-    mesh.Update(vertices, indices, Mesh::Type::Triangles);
+    mesh.Update(vertices, ParseIndices(assimpMesh), Mesh::Type::Triangles);
 }
 
 
-void MeshFactory::CubeWireframe(Mesh& mesh, const float edge) {
+template <>
+void MeshFactory::LoadFromFile<PosNormalVertex>(Mesh& mesh, const std::string &filepath)
+{
+    Assimp::Importer importer;
+
+    const aiScene* scene = importer.ReadFile(filepath, defaultReadFlags | aiProcess_GenSmoothNormals);
+    if (scene == nullptr || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+        throw std::runtime_error("Failed to load model");
+    }
+
+    const aiMesh* assimpMesh = scene->mMeshes[0];
+
+    std::vector<PosNormalVertex> vertices;
+    vertices.reserve(assimpMesh->mNumVertices);
+
+    for (int i=0; i < assimpMesh->mNumVertices; i++) {
+        glm::vec3 position(
+            assimpMesh->mVertices[i].x,
+            assimpMesh->mVertices[i].y,
+            assimpMesh->mVertices[i].z
+        );
+
+        glm::vec3 normal(
+            assimpMesh->mNormals[i].x,
+            assimpMesh->mNormals[i].y,
+            assimpMesh->mNormals[i].z
+        );
+
+        vertices.emplace_back(position, normal);
+    }
+
+    mesh.Update(vertices, ParseIndices(assimpMesh), Mesh::Type::Triangles);
+}
+
+
+template <>
+void MeshFactory::CubeWireframe<PositionVertex>(Mesh& mesh, const float edge) {
     const float halfEdge = edge / 2.f;
 
-    const std::vector<float> vertices = {
+    const std::vector<PositionVertex> vertices = {
         // Upper vertices
-        halfEdge, halfEdge,  halfEdge,
-       -halfEdge, halfEdge,  halfEdge,
-       -halfEdge, halfEdge, -halfEdge,
-        halfEdge, halfEdge, -halfEdge,
+        {  halfEdge, halfEdge,  halfEdge },
+        { -halfEdge, halfEdge,  halfEdge },
+        { -halfEdge, halfEdge, -halfEdge },
+        {  halfEdge, halfEdge, -halfEdge },
 
        // Lower vertices
-        halfEdge, -halfEdge,  halfEdge,
-       -halfEdge, -halfEdge,  halfEdge,
-       -halfEdge, -halfEdge, -halfEdge,
-        halfEdge, -halfEdge, -halfEdge
+        {  halfEdge, -halfEdge,  halfEdge },
+        { -halfEdge, -halfEdge,  halfEdge },
+        { -halfEdge, -halfEdge, -halfEdge },
+        {  halfEdge, -halfEdge, -halfEdge }
    };
 
     constexpr uint32_t primitiveRestart = std::numeric_limits<uint32_t>::max();
@@ -69,4 +100,19 @@ void MeshFactory::CubeWireframe(Mesh& mesh, const float edge) {
     };
 
     mesh.Update(vertices, indices, Mesh::Type::LinesStrip);
+}
+
+
+std::vector<uint32_t> MeshFactory::ParseIndices(const aiMesh *assimpMesh) {
+    std::vector<uint32_t> indices;
+    indices.reserve(assimpMesh->mNumFaces * 3);
+
+    for (int i=0; i < assimpMesh->mNumFaces; i++) {
+        const aiFace face = assimpMesh->mFaces[i];
+        for (int j=0; j < face.mNumIndices; j++) {
+            indices.push_back(face.mIndices[j]);
+        }
+    }
+
+    return indices;
 }
