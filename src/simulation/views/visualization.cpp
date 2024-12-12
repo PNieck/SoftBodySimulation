@@ -47,6 +47,8 @@ void Visualization::Render(const SpringGraph& springGraph)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shader.Use();
+
+    const auto cameraMtx = projection * view;
     simulationArea.Render(shader, cameraMtx);
     steeringCube.Render(shader, cameraMtx);
 
