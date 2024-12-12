@@ -88,7 +88,6 @@ void Window::RunMessageLoop()
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
-        controller.Update();
         controller.Render();
 
         glfwSwapBuffers(window);

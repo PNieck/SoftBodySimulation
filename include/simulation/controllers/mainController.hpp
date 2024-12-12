@@ -19,8 +19,6 @@ public:
     explicit MainController(GLFWwindow* window);
     ~MainController();
 
-    void Update();
-
     void StartSimulation()
         {  }
 

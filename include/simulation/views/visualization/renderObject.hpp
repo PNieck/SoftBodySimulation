@@ -39,6 +39,7 @@ public:
     )
         { mesh.Update(vertices, indices, meshType); }
 
+    [[nodiscard]]
     const Mesh& GetMesh() const
         { return mesh; }
 

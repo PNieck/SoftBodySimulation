@@ -6,7 +6,8 @@
 #include "visualization/shaders/stdShader.hpp"
 #include "visualization/framebuffer.hpp"
 
-#include "../model/simulationProperties.hpp"
+#include "../model/simulationEnvironment.hpp"
+#include "../model/springGraph.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
@@ -16,9 +17,7 @@ class Visualization {
 public:
     Visualization(int xResolution, int yResolution);
 
-    void Update(const glm::quat& q);
-
-    void Render();
+    void Render(const SpringGraph& springGraph);
 
     void RotateCamera(float x, float y);
 
@@ -29,7 +28,9 @@ public:
     void SetCameraPosition(const glm::vec3& position)
         { camera.SetPosition(position); }
 
-    void SetSimulationProperties(const SimulationProperties& simProperties);
+    void SetSimulationProperties(const SimulationEnvironment& simProperties);
+    void SetSteeringCubeEdgeLength(const float length)
+        { steeringCube.SetScale(length); }
 
     [[nodiscard]]
     bool IsMouseOverWindow() const
@@ -49,8 +50,9 @@ private:
 
     RenderObject simulationArea;
     RenderObject steeringCube;
+    RenderObject sphere;
 
-    SimulationProperties properties;
+    SimulationEnvironment properties;
 
     StdShader shader;
 };

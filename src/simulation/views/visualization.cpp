@@ -30,17 +30,12 @@ Visualization::Visualization(const int xResolution, const int yResolution):
 
     MeshFactory::CubeWireframe(simulationArea.GetMesh());
     MeshFactory::CubeWireframe(steeringCube.GetMesh());
-
-    SetSimulationProperties(SimulationProperties());
+    MeshFactory::LoadFromFile(sphere.GetMesh(), "../../models/icosphere.obj");
+    sphere.SetScale(0.01f);
 }
 
 
-void Visualization::Update(const glm::quat& q)
-{
-}
-
-
-void Visualization::Render()
+void Visualization::Render(const SpringGraph& springGraph)
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -61,6 +56,11 @@ void Visualization::Render()
     shader.Use();
     simulationArea.Render(shader, cameraMtx);
     steeringCube.Render(shader, cameraMtx);
+
+    for (const auto& point: springGraph.MaterialPoints()) {
+        sphere.SetPosition(point.position);
+        sphere.Render(shader, cameraMtx);
+    }
 
     Framebuffer::UseDefault();
 
@@ -85,10 +85,9 @@ void Visualization::RotateCamera(const float x, const float y)
 }
 
 
-void Visualization::SetSimulationProperties(const SimulationProperties &simProperties) {
+void Visualization::SetSimulationProperties(const SimulationEnvironment &simProperties) {
     properties = simProperties;
 
     simulationArea.SetScale(simProperties.simulationAreaEdgeLength);
-    steeringCube.SetScale(simProperties.steeringCubeEdgeLength);
 }
 

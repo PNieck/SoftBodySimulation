@@ -26,6 +26,9 @@ MainController::MainController(GLFWwindow *window):
     ImGui_ImplGlfw_InstallEmscriptenCanvasResizeCallback("#canvas");
 #endif
     ImGui_ImplOpenGL3_Init(glsl_version);
+
+    visualization.SetSteeringCubeEdgeLength(steeringCubeEdgeLen);
+    visualization.SetSimulationProperties(SimulationEnvironment());
 }
 
 
@@ -34,11 +37,6 @@ MainController::~MainController()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-}
-
-
-void MainController::Update()
-{
 }
 
 
@@ -51,7 +49,8 @@ void MainController::Render()
 
     dockingSpace.Render();
     optionsPanel.Render();
-    visualization.Render();
+
+    visualization.Render(simulator.GetSpringsState());
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
