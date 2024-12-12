@@ -22,10 +22,13 @@ Grid::Grid()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void Grid::Render(const glm::mat4& view, const glm::mat4& projection) const
+
+void Grid::Render(const glm::mat4& view, const glm::mat4& projection, float nearPlane, float farPlane) const
 {
     shader.Use();
 
+    shader.SetNearPlane(nearPlane);
+    shader.SetFarPlane(farPlane);
     shader.SetViewMatrix(view);
     shader.SetProjectionMatrix(projection);
 

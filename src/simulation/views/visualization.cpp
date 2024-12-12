@@ -38,20 +38,13 @@ Visualization::Visualization(const int xResolution, const int yResolution):
 
 void Visualization::Render(const SpringGraph& springGraph)
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    const auto view = camera.ViewMatrix();
-    const auto projection = camera.ProjectionMatrix();
-
-    const auto cameraMtx = projection * view;
-
     ImGui::Begin(WindowName());
 
     mouseIsOver = ImGui::IsWindowHovered();
 
     framebuffer.Use();
 
-    grid.Render(view, projection);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shader.Use();
     simulationArea.Render(shader, cameraMtx);
@@ -61,6 +54,9 @@ void Visualization::Render(const SpringGraph& springGraph)
         sphere.SetPosition(point.position);
         sphere.Render(shader, cameraMtx);
     }
+
+    const auto camParams = camera.GetParameters();
+    grid.Render(view, projection, camParams.nearPlane, camParams.farPlane);
 
     Framebuffer::UseDefault();
 
