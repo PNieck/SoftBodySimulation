@@ -1,9 +1,9 @@
 #pragma once
 
 
-class SimulationProperties
+class SimulationEnvironment
 {
 public:
     float simulationAreaEdgeLength = 2.f;
-    float steeringCubeEdgeLength = 0.2f;
+    float dampingCoef = 2.f;
 };
