@@ -31,6 +31,7 @@ Visualization::Visualization(const int xResolution, const int yResolution):
     MeshFactory::CubeWireframe(simulationArea.GetMesh());
     MeshFactory::CubeWireframe(steeringCube.GetMesh());
     MeshFactory::LoadFromFile(sphere.GetMesh(), "../../models/icosphere.obj");
+    glEnable(GL_DEPTH_TEST);
     sphere.SetScale(0.01f);
 }
 
@@ -50,7 +51,6 @@ void Visualization::Render(const SpringGraph& springGraph)
 
     framebuffer.Use();
 
-    glClear(GL_COLOR_BUFFER_BIT);
     grid.Render(view, projection);
 
     shader.Use();
