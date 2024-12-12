@@ -48,6 +48,9 @@ void Visualization::Render(const SpringGraph& springGraph)
 
     shader.Use();
 
+    const auto view = camera.ViewMatrix();
+    const auto projection = camera.ProjectionMatrix();
+
     const auto cameraMtx = projection * view;
     simulationArea.Render(shader, cameraMtx);
     steeringCube.Render(shader, cameraMtx);
