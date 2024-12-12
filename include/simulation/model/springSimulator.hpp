@@ -13,6 +13,9 @@ public:
     const SpringGraph& GetSpringsState() const
         { return springGraph; }
 
+    void ChangeMaterialPointPosition(const SpringGraph::MaterialPointId materialPointId, const glm::vec3& newPosition)
+        { springGraph.GetMaterialPoint(materialPointId).position = newPosition; }
+
 private:
     SpringGraph springGraph;
     SimulationEnvironment environment;

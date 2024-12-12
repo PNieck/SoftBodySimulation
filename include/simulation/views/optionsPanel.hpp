@@ -16,4 +16,5 @@ private:
     MainController& controller;
 
     void RenderStartStopButton(bool simRuns);
+    void RenderSteeringCubeOptions() const;
 };

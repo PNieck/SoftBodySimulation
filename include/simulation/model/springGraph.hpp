@@ -23,6 +23,10 @@ public:
         { return materialPoints.at(id); }
 
     [[nodiscard]]
+    MaterialPoint& GetMaterialPoint(const MaterialPointId id)
+        { return materialPoints.at(id); }
+
+    [[nodiscard]]
     const std::vector<MaterialPoint>& MaterialPoints() const
         { return materialPoints; }
 

@@ -25,11 +25,23 @@ public:
     void SetRotation(const glm::mat4& mat)
         { rotationMatrix = mat; }
 
+    [[nodiscard]]
+    const glm::mat4& RotationMatrix() const
+        { return rotationMatrix; }
+
     void SetPosition(const glm::vec3& position)
         { translation = position; }
 
+    [[nodiscard]]
+    const glm::vec3& GetPosition() const
+        { return translation; }
+
     void SetColor(const glm::vec4& newColor)
         { color = newColor; }
+
+    [[nodiscard]]
+    const glm::vec3& GetScale() const
+        { return scale; }
 
     void SetScale(const glm::vec3& newScale)
         { scale = newScale; }

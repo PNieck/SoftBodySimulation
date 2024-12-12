@@ -43,6 +43,12 @@ public:
     void MouseMoved(int x, int y);
     void ScrollMoved(int offset);
 
+    void SetSteeringCubePosition(const glm::vec3& position);
+
+    [[nodiscard]]
+    const glm::vec3& GetSteeringCubePosition() const
+        { return visualization.GetSteeringCube().GetPosition(); }
+
 private:
     using SpringId = SpringGraph::SpringId;
     using MaterialPointId = SpringGraph::MaterialPointId;
@@ -65,4 +71,5 @@ private:
     bool WantToCaptureMouse() const;
 
     SpringGraph InitialSpringGraph();
+    void UpdateSteeringMaterialPoints();
 };

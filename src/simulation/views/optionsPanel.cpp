@@ -17,7 +17,12 @@ void OptionsPanel::Render()
 
     const bool simRuns = controller.SimulationIsRunning();
 
+    ImGui::PushItemWidth(-FLT_MIN);
+
     RenderStartStopButton(simRuns);
+    RenderSteeringCubeOptions();
+
+    ImGui::PopItemWidth();
 
     ImGui::End();
 }
@@ -48,4 +53,19 @@ void OptionsPanel::RenderStartStopButton(const bool simRuns)
         //controller.SetProperties(properties);
     }
     ImGui::EndDisabled();
+}
+
+
+void OptionsPanel::RenderSteeringCubeOptions() const {
+    ImGui::SeparatorText("Steering cube options");
+
+    const auto& pos = controller.GetSteeringCubePosition();
+    float coordinates[3] = {pos.x, pos.y, pos.z};
+
+    ImGui::Text("Position");
+    if (ImGui::DragFloat3("##Position", coordinates, 0.01f)) {
+        controller.SetSteeringCubePosition(
+            glm::vec3(coordinates[0], coordinates[1], coordinates[2])
+        );
+    }
 }

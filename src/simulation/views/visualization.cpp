@@ -31,7 +31,6 @@ Visualization::Visualization(const int xResolution, const int yResolution):
     glEnable(GL_DEPTH_TEST);
 
     MeshFactory::CubeWireframe<PositionVertex>(simulationArea.GetMesh());
-    MeshFactory::CubeWireframe<PositionVertex>(steeringCube.GetMesh());
     MeshFactory::LoadFromFile<PosNormalVertex>(sphere.GetMesh(), "../../models/icosphere.obj");
     sphere.SetScale(0.01f);
 }
