@@ -68,4 +68,16 @@ void OptionsPanel::RenderSteeringCubeOptions() const {
             glm::vec3(coordinates[0], coordinates[1], coordinates[2])
         );
     }
+
+    const auto euler = eulerAngles(controller.GetSteeringCubeRotationQuat());
+    coordinates[0] = euler.x;
+    coordinates[1] = euler.y;
+    coordinates[2] = euler.z;
+
+    ImGui::Text("Rotation (XYZ)");
+    if (ImGui::DragFloat3("##SEulerAngles", coordinates, 0.01f)) {
+        controller.SetSteeringCubeRotation(
+            glm::vec3(coordinates[0], coordinates[1], coordinates[2])
+        );
+    }
 }

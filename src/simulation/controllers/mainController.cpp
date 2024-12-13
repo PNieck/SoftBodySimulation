@@ -90,15 +90,14 @@ void MainController::ScrollMoved(const int offset)
 }
 
 void MainController::SetSteeringCubePosition(const glm::vec3 &position) {
-    auto& steeringCube = visualization.GetSteeringCube();
-    steeringCube.SetPosition(position);
+    visualization.GetSteeringCube().SetPosition(position);
     UpdateSteeringMaterialPoints();
 }
 
 
-bool MainController::WantToCaptureMouse() const
-{
-    return !visualization.IsMouseOverWindow();
+void MainController::SetSteeringCubeRotation(const glm::quat &rotation) {
+    visualization.GetSteeringCube().SetRotation(rotation);
+    UpdateSteeringMaterialPoints();
 }
 
 
@@ -152,17 +151,25 @@ SpringGraph MainController::InitialSpringGraph() {
 
 void MainController::UpdateSteeringMaterialPoints() {
     const auto& steeringCube = visualization.GetSteeringCube();
-    const auto& position = steeringCube.GetPosition();
+    const auto& cubePosition = steeringCube.GetPosition();
 
     const float len = steeringCube.GetEdgeLength() / 2.0f * std::sqrt(3.f);
-    const auto& rotation = steeringCube.RotationMatrix();
+    const auto& rotation = steeringCube.RotationQuat();
 
     for (int x=0; x < 2; x++) {
         for (int y=0; y < 2; y++) {
             for (int z=0; z < 2; z++) {
                 const auto id = steeringPointsIds.At(x, y, z);
-                auto newPosition = position + normalize(glm::vec3(-1.0f+2*x, -1.0f+2*y, -1.0f+2*z))*len;
-                newPosition = rotation * glm::vec4(newPosition, 1.f);
+
+                auto newPosition = normalize(
+                    glm::vec3(
+                        -1.0f + static_cast<float>(2 * x),  // Equals -1 if x == 0 and 1 if x == 1
+                        -1.0f + static_cast<float>(2 * y),
+                        -1.0f + static_cast<float>(2 * z)
+                    )) * len;
+
+                newPosition = rotate(rotation, newPosition);
+                newPosition += cubePosition;
                 simulator.ChangeMaterialPointPosition(id, newPosition);
             }
         }

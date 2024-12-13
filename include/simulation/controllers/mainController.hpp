@@ -49,6 +49,12 @@ public:
     const glm::vec3& GetSteeringCubePosition() const
         { return visualization.GetSteeringCube().GetPosition(); }
 
+    void SetSteeringCubeRotation(const glm::quat& rotation);
+
+    [[nodiscard]]
+    glm::quat GetSteeringCubeRotationQuat() const
+        { return visualization.GetSteeringCube().RotationQuat(); }
+
 private:
     using SpringId = SpringGraph::SpringId;
     using MaterialPointId = SpringGraph::MaterialPointId;
@@ -68,7 +74,8 @@ private:
 
 
     [[nodiscard]]
-    bool WantToCaptureMouse() const;
+    bool WantToCaptureMouse() const
+        { return !visualization.IsMouseOverWindow(); }
 
     SpringGraph InitialSpringGraph();
     void UpdateSteeringMaterialPoints();
