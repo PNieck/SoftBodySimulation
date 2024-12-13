@@ -31,7 +31,6 @@ Visualization::Visualization(const int xResolution, const int yResolution):
     glEnable(GL_DEPTH_TEST);
 
     MeshFactory::CubeWireframe<PositionVertex>(simulationArea.GetMesh());
-    MeshFactory::CubeWireframe<PositionVertex>(steeringCube.GetMesh());
     MeshFactory::LoadFromFile<PosNormalVertex>(sphere.GetMesh(), "../../models/icosphere.obj");
     sphere.SetScale(0.01f);
 }
@@ -74,7 +73,7 @@ void Visualization::Render(const SpringGraph& springGraph)
 
     const uint64_t textureID = framebuffer.GetColorTextureId();
     const ImVec2 size = ImGui::GetContentRegionAvail();
-    ImGui::Image(textureID, ImVec2{ size.x, size.y });
+    ImGui::Image(textureID, ImVec2{ size.x, size.y }, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
     ImGui::End();
 }
 

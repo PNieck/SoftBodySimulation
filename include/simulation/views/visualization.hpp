@@ -6,6 +6,7 @@
 #include "visualization/shaders/stdShader.hpp"
 #include "visualization/shaders/phongShader.hpp"
 #include "visualization/framebuffer.hpp"
+#include "visualization/steeringCube.hpp"
 
 #include "../model/simulationEnvironment.hpp"
 #include "../model/springGraph.hpp"
@@ -30,8 +31,14 @@ public:
         { camera.SetPosition(position); }
 
     void SetSimulationProperties(const SimulationEnvironment& simProperties);
-    void SetSteeringCubeEdgeLength(const float length)
-        { steeringCube.SetScale(length); }
+
+    [[nodiscard]]
+    SteeringCube& GetSteeringCube()
+        { return steeringCube; }
+
+    [[nodiscard]]
+    const SteeringCube& GetSteeringCube() const
+        { return steeringCube; }
 
     [[nodiscard]]
     bool IsMouseOverWindow() const
@@ -50,7 +57,7 @@ private:
     Framebuffer framebuffer;
 
     RenderObject simulationArea;
-    RenderObject steeringCube;
+    SteeringCube steeringCube;
     RenderObject sphere;
 
     SimulationEnvironment properties;
