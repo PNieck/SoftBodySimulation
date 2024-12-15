@@ -30,6 +30,10 @@ public:
     const std::vector<MaterialPoint>& MaterialPoints() const
         { return materialPoints; }
 
+    [[nodiscard]]
+    const std::vector<Spring>& Springs() const
+        { return springs; }
+
 private:
     std::vector<MaterialPoint> materialPoints;
     std::vector<Spring> springs;

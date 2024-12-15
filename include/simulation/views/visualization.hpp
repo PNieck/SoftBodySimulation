@@ -59,9 +59,12 @@ private:
     RenderObject simulationArea;
     SteeringCube steeringCube;
     RenderObject sphere;
+    Mesh springs;
 
     SimulationEnvironment properties;
 
     StdShader shader;
     PhongShader phongShader;
+
+    void UpdateSprings(const SpringGraph& springGraph);
 };
