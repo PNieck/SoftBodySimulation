@@ -58,9 +58,10 @@ public:
     void UpdateMesh(
         const std::vector<v>& vertices,
         const std::vector<uint32_t>& indices,
-        const Mesh::Type meshType
+        const Mesh::Type meshType,
+        const Mesh::Usage usage
     )
-        { mesh.Update(vertices, indices, meshType); }
+        { mesh.Update(vertices, indices, meshType, usage); }
 
     [[nodiscard]]
     const Mesh& GetMesh() const
