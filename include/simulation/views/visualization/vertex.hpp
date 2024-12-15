@@ -11,7 +11,7 @@ concept Vertex = requires(T t) {
 
 class PositionVertex {
 public:
-    explicit PositionVertex(const glm::vec3& pos):
+    PositionVertex(const glm::vec3& pos):
         position(pos) {}
 
     PositionVertex(const float x, const float y, const float z):

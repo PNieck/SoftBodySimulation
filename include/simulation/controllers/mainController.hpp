@@ -61,6 +61,8 @@ private:
 
     static constexpr float initialMaterialPointMass = 1.f;
     static constexpr float steeringCubeEdgeLen = 0.2f;
+    static constexpr float initialBezierSpringsCoef = 5.f;
+    static constexpr float steeringSpringsCoef = 5.f;
 
     MouseState mouseState;
 
