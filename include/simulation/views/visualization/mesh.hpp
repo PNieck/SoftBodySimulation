@@ -13,6 +13,7 @@ public:
         Triangles = GL_TRIANGLES,
         Lines = GL_LINES,
         LinesStrip = GL_LINE_STRIP,
+        Patches = GL_PATCHES
     };
 
     enum Usage {
