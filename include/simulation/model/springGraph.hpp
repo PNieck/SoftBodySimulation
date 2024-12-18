@@ -8,8 +8,6 @@
 
 class SpringGraph {
 public:
-    using MaterialPointId = size_t;
-    using SpringId = size_t;
 
     SpringGraph() = default;
     explicit SpringGraph(size_t materialPointsNb, size_t springsNb);
@@ -31,8 +29,17 @@ public:
         { return materialPoints; }
 
     [[nodiscard]]
+    const Spring& GetSpring(const SpringId id) const
+        { return springs.at(id); }
+
+    [[nodiscard]]
     const std::vector<Spring>& Springs() const
         { return springs; }
+
+    friend  void swap(SpringGraph& first, SpringGraph& second) noexcept {
+        std::swap(first.materialPoints, second.materialPoints);
+        std::swap(first.springs, second.springs);
+    }
 
 private:
     std::vector<MaterialPoint> materialPoints;

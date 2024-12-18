@@ -9,7 +9,7 @@
 #include "../views/optionsPanel.hpp"
 #include "../views/visualization.hpp"
 
-#include "../model/springSimulator.hpp"
+#include "../model/model.hpp"
 
 #include "../utils/vector3D.hpp"
 
@@ -20,17 +20,17 @@ public:
     ~MainController();
 
     void StartSimulation()
-        {  }
+        { model.StartSimulation(); }
 
     void StopSimulation()
-        {  }
+        { model.EndSimulation(); }
 
     void UpdateSimulation()
-        {  }
+        { model.UpdateSimulation(); }
 
     [[nodiscard]]
     bool SimulationIsRunning() const
-        { return true; }
+        { return model.IsSimulationRunning(); }
 
     void Render();
 
@@ -56,13 +56,10 @@ public:
         { return visualization.GetSteeringCube().RotationQuat(); }
 
 private:
-    using SpringId = SpringGraph::SpringId;
-    using MaterialPointId = SpringGraph::MaterialPointId;
-
     static constexpr float initialMaterialPointMass = 1.f;
     static constexpr float steeringCubeEdgeLen = 0.2f;
     static constexpr float initialBezierSpringsCoef = 5.f;
-    static constexpr float steeringSpringsCoef = 5.f;
+    static constexpr float steeringSpringsCoef = 30.f;
 
     MouseState mouseState;
 
@@ -72,7 +69,7 @@ private:
 
     Vector3D<MaterialPointId> bezierPointsIds;
     Vector3D<MaterialPointId> steeringPointsIds;
-    SpringSimulator simulator;
+    Model model;
 
 
     [[nodiscard]]

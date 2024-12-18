@@ -115,8 +115,8 @@ void Visualization::UpdateSprings(const SpringGraph &springGraph) {
     indices.reserve(springGraph.Springs().size() * 2);
 
     for (const auto& spring: springGraph.Springs()) {
-        vertices.push_back(spring.anchorPoint1.position);
-        vertices.push_back(spring.anchorPoint2.position);
+        vertices.push_back(springGraph.GetMaterialPoint(spring.anchorPoint1).position);
+        vertices.push_back(springGraph.GetMaterialPoint(spring.anchorPoint2).position);
 
         indices.push_back(i++);
         indices.push_back(i++);

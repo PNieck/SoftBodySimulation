@@ -10,7 +10,7 @@ MainController::MainController(GLFWwindow *window):
     visualization(1280, 920),
     bezierPointsIds(4, 4, 4),
     steeringPointsIds(2, 2, 2),
-    simulator(InitialSpringGraph())
+    model(InitialSpringGraph(), SimulationEnvironment())
 {
     const auto glsl_version = "#version 410";
     IMGUI_CHECKVERSION();
@@ -50,7 +50,8 @@ void MainController::Render()
     dockingSpace.Render();
     optionsPanel.Render();
 
-    visualization.Render(simulator.GetSpringsState());
+    visualization.Render(model.StartReadingGraph());
+    model.EndReadingGraph();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -150,7 +151,7 @@ SpringGraph MainController::InitialSpringGraph() {
      */
 
     float stdSpringLen = steeringCubeEdgeLen / 3.f;
-    float diagonalSpringLen = steeringCubeEdgeLen * std::sqrt(2.f);
+    float diagonalSpringLen = steeringCubeEdgeLen / 3.f * std::sqrt(2.f);
 
     for (size_t x=0; x < bezierPointsIds.SizeX(); x++) {
         for (size_t y=0; y < bezierPointsIds.SizeY(); y++) {
@@ -243,6 +244,8 @@ void MainController::UpdateSteeringMaterialPoints() {
     const float len = steeringCube.GetEdgeLength() / 2.0f * std::sqrt(3.f);
     const auto& rotation = steeringCube.RotationQuat();
 
+    auto graphs = model.StartWritingGraph();
+
     for (int x=0; x < 2; x++) {
         for (int y=0; y < 2; y++) {
             for (int z=0; z < 2; z++) {
@@ -257,8 +260,11 @@ void MainController::UpdateSteeringMaterialPoints() {
 
                 newPosition = rotate(rotation, newPosition);
                 newPosition += cubePosition;
-                simulator.ChangeMaterialPointPosition(id, newPosition);
+                std::get<0>(graphs).GetMaterialPoint(id).position = newPosition;
+                std::get<1>(graphs).GetMaterialPoint(id).position = newPosition;
             }
         }
     }
+
+    model.EndWritingGraph();
 }
