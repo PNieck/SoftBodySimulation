@@ -15,7 +15,7 @@ Visualization::Visualization(const int xResolution, const int yResolution):
         .viewportWidth = xResolution,
         .viewportHeight = yResolution,
         .fov = std::numbers::pi_v<float> / 4.f,
-        .nearPlane = 0.5f,
+        .nearPlane = 0.1f,
         .farPlane = 100.0f,
     }),
     framebuffer(xResolution, yResolution)
@@ -66,6 +66,13 @@ void Visualization::Render(const SpringGraph& springGraph)
         sphere.Render(phongShader);
     }
 
+    UpdateSprings(springGraph);
+    shader.Use();
+    shader.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));     // White
+    shader.SetMVP(cameraMtx);
+    springs.Use();
+    glDrawElements(springs.GetType(), springs.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+
     const auto camParams = camera.GetParameters();
     grid.Render(view, projection, camParams.nearPlane, camParams.farPlane);
 
@@ -96,5 +103,25 @@ void Visualization::SetSimulationProperties(const SimulationEnvironment &simProp
     properties = simProperties;
 
     simulationArea.SetScale(simProperties.simulationAreaEdgeLength);
+}
+
+
+void Visualization::UpdateSprings(const SpringGraph &springGraph) {
+    std::vector<PositionVertex> vertices;
+    std::vector<uint32_t> indices;
+    int i=0;
+
+    vertices.reserve(springGraph.Springs().size() * 2);
+    indices.reserve(springGraph.Springs().size() * 2);
+
+    for (const auto& spring: springGraph.Springs()) {
+        vertices.push_back(springGraph.GetMaterialPoint(spring.anchorPoint1).position);
+        vertices.push_back(springGraph.GetMaterialPoint(spring.anchorPoint2).position);
+
+        indices.push_back(i++);
+        indices.push_back(i++);
+    }
+
+    springs.Update(vertices, indices, Mesh::Lines, Mesh::Usage::Dynamic);
 }
 

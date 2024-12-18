@@ -2,6 +2,8 @@
 
 #include <glm/vec3.hpp>
 
+using MaterialPointId = size_t;
+
 
 class MaterialPoint {
 public:

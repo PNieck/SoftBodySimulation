@@ -10,7 +10,7 @@ MainController::MainController(GLFWwindow *window):
     visualization(1280, 920),
     bezierPointsIds(4, 4, 4),
     steeringPointsIds(2, 2, 2),
-    simulator(InitialSpringGraph())
+    model(InitialSpringGraph(), SimulationEnvironment())
 {
     const auto glsl_version = "#version 410";
     IMGUI_CHECKVERSION();
@@ -50,7 +50,8 @@ void MainController::Render()
     dockingSpace.Render();
     optionsPanel.Render();
 
-    visualization.Render(simulator.GetSpringsState());
+    visualization.Render(model.StartReadingGraph());
+    model.EndReadingGraph();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -145,6 +146,93 @@ SpringGraph MainController::InitialSpringGraph() {
         }
     }
 
+    /*
+     *      Adding springs
+     */
+
+    float stdSpringLen = steeringCubeEdgeLen / 3.f;
+    float diagonalSpringLen = steeringCubeEdgeLen / 3.f * std::sqrt(2.f);
+
+    for (size_t x=0; x < bezierPointsIds.SizeX(); x++) {
+        for (size_t y=0; y < bezierPointsIds.SizeY(); y++) {
+            for (size_t z=0; z < bezierPointsIds.SizeZ(); z++) {
+                if (x != bezierPointsIds.SizeZ() - 1) {
+                    SpringId end1 = bezierPointsIds.At(x, y, z);
+                    SpringId end2 = bezierPointsIds.At(x + 1, y, z);
+
+                    result.AddSpring(stdSpringLen, initialBezierSpringsCoef, end1, end2);
+                }
+
+                if (y != bezierPointsIds.SizeY() - 1) {
+                    SpringId end1 = bezierPointsIds.At(x, y, z);
+                    SpringId end2 = bezierPointsIds.At(x, y + 1, z);
+
+                    result.AddSpring(stdSpringLen, initialBezierSpringsCoef, end1, end2);
+                }
+
+                if (z != bezierPointsIds.SizeZ() - 1) {
+                    SpringId end1 = bezierPointsIds.At(x, y, z);
+                    SpringId end2 = bezierPointsIds.At(x, y, z + 1);
+
+                    result.AddSpring(stdSpringLen, initialBezierSpringsCoef, end1, end2);
+                }
+
+                if (x != bezierPointsIds.SizeX() - 1 && y != bezierPointsIds.SizeY() - 1) {
+                    SpringId end1 = bezierPointsIds.At(x, y, z);
+                    SpringId end2 = bezierPointsIds.At(x + 1, y + 1, z);
+
+                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                }
+
+                if (x != bezierPointsIds.SizeX() - 1 && z != bezierPointsIds.SizeZ() - 1) {
+                    SpringId end1 = bezierPointsIds.At(x, y, z);
+                    SpringId end2 = bezierPointsIds.At(x + 1, y, z + 1);
+
+                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                }
+
+                if (y != bezierPointsIds.SizeY() - 1 && z != bezierPointsIds.SizeZ() - 1) {
+                    SpringId end1 = bezierPointsIds.At(x, y, z);
+                    SpringId end2 = bezierPointsIds.At(x, y + 1, z + 1);
+
+                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                }
+
+                if (x != bezierPointsIds.SizeX() - 1 && y != 0) {
+                    SpringId end1 = bezierPointsIds.At(x, y, z);
+                    SpringId end2 = bezierPointsIds.At(x + 1, y - 1, z);
+
+                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                }
+
+                if (x != bezierPointsIds.SizeX() - 1 && z != 0) {
+                    SpringId end1 = bezierPointsIds.At(x, y, z);
+                    SpringId end2 = bezierPointsIds.At(x + 1, y, z - 1);
+
+                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                }
+
+                if (y != bezierPointsIds.SizeY() - 1 && z != 0) {
+                    SpringId end1 = bezierPointsIds.At(x, y, z);
+                    SpringId end2 = bezierPointsIds.At(x, y + 1, z - 1);
+
+                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                }
+            }
+        }
+    }
+
+    for (size_t x=0; x < steeringPointsIds.SizeX(); x++) {
+        for (size_t y=0; y < steeringPointsIds.SizeY(); y++) {
+            for (size_t z=0; z < steeringPointsIds.SizeZ(); z++) {
+                SpringId end1 = steeringPointsIds.At(x, y, z);
+                SpringId end2 = bezierPointsIds.At(3*x, 3*y, 3*z);
+
+                result.AddSpring(0.f, steeringSpringsCoef, end1, end2);
+            }
+        }
+    }
+
     return result;
 }
 
@@ -155,6 +243,8 @@ void MainController::UpdateSteeringMaterialPoints() {
 
     const float len = steeringCube.GetEdgeLength() / 2.0f * std::sqrt(3.f);
     const auto& rotation = steeringCube.RotationQuat();
+
+    auto graphs = model.StartWritingGraph();
 
     for (int x=0; x < 2; x++) {
         for (int y=0; y < 2; y++) {
@@ -170,8 +260,11 @@ void MainController::UpdateSteeringMaterialPoints() {
 
                 newPosition = rotate(rotation, newPosition);
                 newPosition += cubePosition;
-                simulator.ChangeMaterialPointPosition(id, newPosition);
+                std::get<0>(graphs).GetMaterialPoint(id).position = newPosition;
+                std::get<1>(graphs).GetMaterialPoint(id).position = newPosition;
             }
         }
     }
+
+    model.EndWritingGraph();
 }

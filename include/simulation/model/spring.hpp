@@ -3,9 +3,12 @@
 #include "materialPoint.hpp"
 
 
+using SpringId = size_t;
+
+
 class Spring {
 public:
-    Spring(MaterialPoint& anchor1, MaterialPoint& anchor2, const float restLength, const float springCoef):
+    Spring(const MaterialPointId anchor1, const MaterialPointId anchor2, const float restLength, const float springCoef):
         restLength(restLength),
         springCoef(springCoef),
         anchorPoint1(anchor1),
@@ -14,6 +17,6 @@ public:
     float restLength;
     float springCoef;
 
-    MaterialPoint& anchorPoint1;
-    MaterialPoint& anchorPoint2;
+    MaterialPointId anchorPoint1;
+    MaterialPointId anchorPoint2;
 };

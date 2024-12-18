@@ -17,7 +17,7 @@ Grid::Grid()
     };
 
     gridMesh.Use();
-    gridMesh.Update<PositionVertex>(vertices, indices, Mesh::Triangles);
+    gridMesh.Update<PositionVertex>(vertices, indices, Mesh::Triangles, Mesh::Usage::Static);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

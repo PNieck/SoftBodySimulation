@@ -9,7 +9,7 @@ constexpr auto defaultReadFlags = aiProcess_Triangulate | aiProcess_JoinIdentica
 
 
 template <>
-void MeshFactory::LoadFromFile<PositionVertex>(Mesh& mesh, const std::string &filepath)
+void MeshFactory::LoadFromFile<PositionVertex>(Mesh& mesh, const std::string &filepath, const Mesh::Usage usage)
 {
     Assimp::Importer importer;
 
@@ -31,12 +31,12 @@ void MeshFactory::LoadFromFile<PositionVertex>(Mesh& mesh, const std::string &fi
         );
     }
 
-    mesh.Update(vertices, ParseIndices(assimpMesh), Mesh::Type::Triangles);
+    mesh.Update(vertices, ParseIndices(assimpMesh), Mesh::Type::Triangles, usage);
 }
 
 
 template <>
-void MeshFactory::LoadFromFile<PosNormalVertex>(Mesh& mesh, const std::string &filepath)
+void MeshFactory::LoadFromFile<PosNormalVertex>(Mesh& mesh, const std::string &filepath, const Mesh::Usage usage)
 {
     Assimp::Importer importer;
 
@@ -66,12 +66,12 @@ void MeshFactory::LoadFromFile<PosNormalVertex>(Mesh& mesh, const std::string &f
         vertices.emplace_back(position, normal);
     }
 
-    mesh.Update(vertices, ParseIndices(assimpMesh), Mesh::Type::Triangles);
+    mesh.Update(vertices, ParseIndices(assimpMesh), Mesh::Type::Triangles, usage);
 }
 
 
 template <>
-void MeshFactory::CubeWireframe<PositionVertex>(Mesh& mesh, const float edge) {
+void MeshFactory::CubeWireframe<PositionVertex>(Mesh& mesh, const float edge, const Mesh::Usage usage) {
     const float halfEdge = edge / 2.f;
 
     const std::vector<PositionVertex> vertices = {
@@ -99,7 +99,7 @@ void MeshFactory::CubeWireframe<PositionVertex>(Mesh& mesh, const float edge) {
         3, 7, primitiveRestart
     };
 
-    mesh.Update(vertices, indices, Mesh::Type::LinesStrip);
+    mesh.Update(vertices, indices, Mesh::Type::LinesStrip, usage);
 }
 
 
