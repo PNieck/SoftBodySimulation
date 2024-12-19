@@ -1,12 +1,16 @@
 #version 410 core
 
 
-in vec3 worldPos;
-in vec3 normal;
+in PosNorm {
+    vec3 worldPos;
+    vec3 normal;
+} vs_out;
+
 
 uniform vec4 fragmentColor;
 uniform vec3 lightPos;
 uniform vec3 camPos;
+
 
 out vec4 FragColor;
 
@@ -18,13 +22,13 @@ const float kd = 0.5, ks = 0.2f, m = 100.0f;
 
 void main()
 {
-    vec3 viewVecN = normalize(camPos - worldPos);
-    vec3 normalN = normalize(normal);
+    vec3 viewVecN = normalize(camPos - vs_out.worldPos);
+    vec3 normalN = normalize(vs_out.normal);
 
     // Ambient reflection
     vec3 color = fragmentColor.xyz * ambientColor;
 
-    vec3 lightVec = normalize(lightPos - worldPos);
+    vec3 lightVec = normalize(lightPos - vs_out.worldPos);
     vec3 halfVec = normalize(viewVecN + lightVec);
 
     // Diffuse reflection
