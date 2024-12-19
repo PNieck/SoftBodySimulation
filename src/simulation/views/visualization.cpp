@@ -76,10 +76,27 @@ void Visualization::Render(const SpringGraph& springGraph, const Vector3D<Materi
     UpdateSoftBody(springGraph, bezierPointsIds);
     bezierSurfaceShader.Use();
     bezierSurfaceShader.SetColor(glm::vec4(0.145f, 0.604f, 0.831f, 1.f));
-    bezierSurfaceShader.SetMVP(cameraMtx);
+    bezierSurfaceShader.SetProjection(projection);
+    bezierSurfaceShader.SetModelMatrix(glm::mat4(1.f));
+    bezierSurfaceShader.SetViewMatrix(view);
+    bezierSurfaceShader.SetLightPosition(glm::vec3(10.0f, 10.f, 10.f));
+    bezierSurfaceShader.SetCameraPosition(camera.GetPosition());
+
     softBody.Use();
     constexpr float v[] = {64.f, 64.f, 64.f, 64.f};
     glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
+    glPatchParameteri(GL_PATCH_VERTICES, 16);
+    glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+
+    normalsCheckShader.Use();
+    normalsCheckShader.SetProjection(projection);
+    normalsCheckShader.SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    normalsCheckShader.SetViewMatrix(view);
+    normalsCheckShader.SetModelMatrix(glm::mat4(1.0f));
+
+    softBody.Use();
+    glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
+    glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, v);
     glPatchParameteri(GL_PATCH_VERTICES, 16);
     glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
 

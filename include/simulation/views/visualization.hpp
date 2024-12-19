@@ -6,6 +6,7 @@
 #include "visualization/shaders/stdShader.hpp"
 #include "visualization/shaders/phongShader.hpp"
 #include "visualization/shaders/bezierSurfaceShader.hpp"
+#include "visualization/shaders/normalsCheckShader.hpp"
 #include "visualization/framebuffer.hpp"
 #include "visualization/steeringCube.hpp"
 
@@ -70,6 +71,7 @@ private:
     StdShader shader;
     PhongShader phongShader;
     BicubicBezierSurfaceShader bezierSurfaceShader;
+    NormalsCheckShader normalsCheckShader;
 
     void UpdateSprings(const SpringGraph& springGraph);
     void UpdateSoftBody(const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds);
