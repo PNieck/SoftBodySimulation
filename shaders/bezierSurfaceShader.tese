@@ -2,18 +2,36 @@
 
 layout (quads, equal_spacing) in;
 
-uniform mat4 MVP;
+uniform mat4 view;
+uniform mat4 model;
+uniform mat4 projection;
+
+
+out PosNorm {
+    vec3 worldPos;
+    vec3 normal;
+} ts_out;
 
 
 vec4 CubicBernsteinPolynomials(float t) {
     float oneMinusT = 1.0 - t;
 
     return vec4 (
-    oneMinusT * oneMinusT * oneMinusT,
-    3.f * oneMinusT * oneMinusT * t,
-    3.f * oneMinusT * t * t,
-    t * t * t
+        oneMinusT * oneMinusT * oneMinusT,
+        3.f * oneMinusT * oneMinusT * t,
+        3.f * oneMinusT * t * t,
+        t * t * t
     );
+}
+
+
+vec3 Derivative(float t, vec3 a0, vec3 a1, vec3 a2, vec3 a3) {
+    float oneMinusT = 1.0 - t;
+
+    return -3.f * oneMinusT * oneMinusT * a0 +
+           (3.f * oneMinusT * oneMinusT - 6.f * t * oneMinusT) * a1 +
+           (6.f * t * oneMinusT - 3.f * t * t) * a2 +
+           3.f * t * t * a3;
 }
 
 
@@ -58,5 +76,20 @@ void main()
     // pos = bu * p * bv^T
     vec3 pos = a0*bv.x + a1*bv.y + a2*bv.z + a3*bv.w;
 
-    gl_Position = MVP * vec4(pos, 1.0f);
+    // Tangent to surface
+    vec3 tan = Derivative(
+        u,
+        bv.x*p00 + bv.y*p01 + bv.z*p02 + bv.w*p03,
+        bv.x*p10 + bv.y*p11 + bv.z*p12 + bv.w*p13,
+        bv.x*p20 + bv.y*p21 + bv.z*p22 + bv.w*p23,
+        bv.x*p30 + bv.y*p31 + bv.z*p32 + bv.w*p33
+    );
+
+    // Bitangent to surface
+    vec3 bitan = Derivative(v, a0, a1, a2, a3);
+
+    ts_out.normal =  normalize(mat3(transpose(inverse(view * model))) * cross(bitan, tan));
+    ts_out.worldPos = (view * model * vec4(pos, 1.0f)).xyz;
+
+    gl_Position = projection * vec4(ts_out.worldPos, 1.f);
 }
