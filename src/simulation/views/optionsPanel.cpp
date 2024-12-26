@@ -21,6 +21,7 @@ void OptionsPanel::Render()
 
     RenderStartStopButton(simRuns);
     RenderSteeringCubeOptions();
+    RenderVisualasationOptions();
 
     ImGui::PopItemWidth();
 
@@ -56,7 +57,8 @@ void OptionsPanel::RenderStartStopButton(const bool simRuns)
 }
 
 
-void OptionsPanel::RenderSteeringCubeOptions() const {
+void OptionsPanel::RenderSteeringCubeOptions() const
+{
     ImGui::SeparatorText("Steering cube options");
 
     const auto& pos = controller.GetSteeringCubePosition();
@@ -80,4 +82,21 @@ void OptionsPanel::RenderSteeringCubeOptions() const {
             glm::vec3(coordinates[0], coordinates[1], coordinates[2])
         );
     }
+}
+
+void OptionsPanel::RenderVisualasationOptions() const
+{
+    ImGui::SeparatorText("Visualisation options");
+
+    bool value = controller.GetRenderingSprings();
+    if (ImGui::Checkbox("Render springs", &value))
+        controller.SetRenderingSprings(value);
+
+    value = controller.GetRenderingMassPoints();
+    if (ImGui::Checkbox("Render mass points", &value))
+        controller.SetRenderingMassPoints(value);
+
+    value = controller.GetRenderingNormals();
+    if (ImGui::Checkbox("Render normals", &value))
+        controller.SetRenderingNormals(value);
 }
