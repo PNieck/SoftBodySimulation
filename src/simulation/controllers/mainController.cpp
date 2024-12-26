@@ -50,7 +50,7 @@ void MainController::Render()
     dockingSpace.Render();
     optionsPanel.Render();
 
-    visualization.Render(model.StartReadingGraph());
+    visualization.Render(model.StartReadingGraph(), bezierPointsIds);
     model.EndReadingGraph();
 
     ImGui::Render();

@@ -44,6 +44,13 @@ public:
     void SetColor(const glm::vec4& newColor)
         { color = newColor; }
 
+    void SetColor(const float r, const float g, const float b, const float a = 1.f)
+        { SetColor(glm::vec4(r, g, b, a)); }
+
+    [[nodiscard]]
+    const glm::vec4& GetColor() const
+        { return color; }
+
     [[nodiscard]]
     const glm::vec3& GetScale() const
         { return scale; }

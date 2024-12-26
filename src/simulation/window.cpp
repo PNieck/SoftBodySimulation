@@ -143,7 +143,7 @@ void Window::MouseButtonCallback(GLFWwindow *glfwWindow, int button, int action,
 }
 
 
-void Window::ScrollCallback(GLFWwindow *glfwWindow, double xoffset, double yoffset)
+void Window::ScrollCallback(GLFWwindow *glfwWindow, const double xoffset, const double yoffset)
 {
     (void)xoffset;
 

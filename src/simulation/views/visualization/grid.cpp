@@ -16,7 +16,7 @@ Grid::Grid()
         1, 2, 3  // Second triangle
     };
 
-    gridMesh.Use();
+    //gridMesh.Use();
     gridMesh.Update<PositionVertex>(vertices, indices, Mesh::Triangles, Mesh::Usage::Static);
 
     glEnable(GL_BLEND);
