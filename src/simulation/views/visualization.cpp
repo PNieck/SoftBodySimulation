@@ -66,12 +66,12 @@ void Visualization::Render(const SpringGraph& springGraph, const Vector3D<Materi
         sphere.Render(phongShader);
     }
 
-    UpdateSprings(springGraph);
-    shader.Use();
-    shader.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));     // White
-    shader.SetMVP(cameraMtx);
-    springs.Use();
-    glDrawElements(springs.GetType(), springs.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+    // UpdateSprings(springGraph);
+    // shader.Use();
+    // shader.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));     // White
+    // shader.SetMVP(cameraMtx);
+    // springs.Use();
+    // glDrawElements(springs.GetType(), springs.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
 
     UpdateSoftBody(springGraph, bezierPointsIds);
     bezierSurfaceShader.Use();
@@ -88,17 +88,17 @@ void Visualization::Render(const SpringGraph& springGraph, const Vector3D<Materi
     glPatchParameteri(GL_PATCH_VERTICES, 16);
     glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
 
-    normalsCheckShader.Use();
-    normalsCheckShader.SetProjection(projection);
-    normalsCheckShader.SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    normalsCheckShader.SetViewMatrix(view);
-    normalsCheckShader.SetModelMatrix(glm::mat4(1.0f));
+    // normalsCheckShader.Use();
+    // normalsCheckShader.SetProjection(projection);
+    // normalsCheckShader.SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    // normalsCheckShader.SetViewMatrix(view);
+    // normalsCheckShader.SetModelMatrix(glm::mat4(1.0f));
 
-    softBody.Use();
-    glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
-    glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, v);
-    glPatchParameteri(GL_PATCH_VERTICES, 16);
-    glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+    // softBody.Use();
+    // glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
+    // glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, v);
+    // glPatchParameteri(GL_PATCH_VERTICES, 16);
+    // glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
 
     const auto camParams = camera.GetParameters();
     grid.Render(view, projection, camParams.nearPlane, camParams.farPlane);
@@ -158,12 +158,69 @@ void Visualization::UpdateSoftBody(const SpringGraph& springGraph, const Vector3
     std::vector<uint32_t> indices;
     int i=0;
 
-    vertices.reserve(16);
-    indices.reserve(16);
+    vertices.reserve(16 * 6);
+    indices.reserve(16 * 6);
 
     for (size_t x=0; x < bezierPointsIds.SizeX(); x++) {
-        for (size_t y=0; y < bezierPointsIds.SizeX(); y++) {
+        for (size_t y=0; y < bezierPointsIds.SizeY(); y++) {
             const MaterialPointId id = bezierPointsIds.At(x, y, 0);
+
+            vertices.emplace_back(springGraph.GetMaterialPoint(id).position);
+            indices.push_back(i++);
+        }
+    }
+
+    for (size_t x=0; x < bezierPointsIds.SizeX(); x++) {
+        for (size_t y=0; y < bezierPointsIds.SizeY(); y++) {
+            const MaterialPointId id = bezierPointsIds.At(
+                x,
+                bezierPointsIds.SizeY() - y - 1,
+                bezierPointsIds.SizeZ() - 1
+            );
+
+            vertices.emplace_back(springGraph.GetMaterialPoint(id).position);
+            indices.push_back(i++);
+        }
+    }
+
+    for (size_t x=0; x < bezierPointsIds.SizeX(); x++) {
+        for (size_t z=0; z < bezierPointsIds.SizeZ(); z++) {
+            const MaterialPointId id = bezierPointsIds.At(
+                x,
+                bezierPointsIds.SizeY() - 1,
+                z
+            );
+
+            vertices.emplace_back(springGraph.GetMaterialPoint(id).position);
+            indices.push_back(i++);
+        }
+    }
+
+    for (size_t x=0; x < bezierPointsIds.SizeX(); x++) {
+        for (size_t z=0; z < bezierPointsIds.SizeZ(); z++) {
+            const MaterialPointId id = bezierPointsIds.At(x, 0, bezierPointsIds.SizeZ() - z - 1);
+
+            vertices.emplace_back(springGraph.GetMaterialPoint(id).position);
+            indices.push_back(i++);
+        }
+    }
+
+    for (size_t y=0; y < bezierPointsIds.SizeY(); y++) {
+        for (size_t z=0; z < bezierPointsIds.SizeZ(); z++) {
+            const MaterialPointId id = bezierPointsIds.At(0, y, z);
+
+            vertices.emplace_back(springGraph.GetMaterialPoint(id).position);
+            indices.push_back(i++);
+        }
+    }
+
+    for (size_t y=0; y < bezierPointsIds.SizeY(); y++) {
+        for (size_t z=0; z < bezierPointsIds.SizeZ(); z++) {
+            const MaterialPointId id = bezierPointsIds.At(
+                bezierPointsIds.SizeX()-1,
+                bezierPointsIds.SizeY() - y - 1,
+                z
+            );
 
             vertices.emplace_back(springGraph.GetMaterialPoint(id).position);
             indices.push_back(i++);
