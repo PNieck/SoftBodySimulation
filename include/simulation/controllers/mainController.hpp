@@ -55,6 +55,24 @@ public:
     glm::quat GetSteeringCubeRotationQuat() const
         { return visualization.GetSteeringCube().RotationQuat(); }
 
+    void SetRenderingMassPoints(const bool v)
+        { visualization.renderMassPoints = v; }
+
+    bool GetRenderingMassPoints() const
+        { return visualization.renderMassPoints; }
+
+    void SetRenderingNormals(const bool v)
+        { visualization.renderNormals = v; }
+
+    bool GetRenderingNormals() const
+        { return visualization.renderNormals; }
+
+    void SetRenderingSprings(const bool v)
+        { visualization.renderSprings = v; }
+
+    bool GetRenderingSprings() const
+        { return visualization.renderSprings; }
+
 private:
     static constexpr float initialMaterialPointMass = 1.f;
     static constexpr float steeringCubeEdgeLen = 0.2f;

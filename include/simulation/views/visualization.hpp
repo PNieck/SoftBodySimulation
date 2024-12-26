@@ -52,6 +52,9 @@ public:
     static const char* WindowName()
         { return "Visualization"; }
 
+    bool renderMassPoints = false;
+    bool renderSprings = false;
+    bool renderNormals = false;
 private:
     bool mouseIsOver = false;
 
@@ -75,4 +78,8 @@ private:
 
     void UpdateSprings(const SpringGraph& springGraph);
     void UpdateSoftBody(const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds);
+
+    void RenderMassPoints(const glm::mat4& view, const glm::mat4& projection, const SpringGraph& springGraph);
+    void RenderSprings(const glm::mat4& cameraMtx, const SpringGraph& springGraph);
+    void RenderNormals(const glm::mat4& view, const glm::mat4& projection);
 };
