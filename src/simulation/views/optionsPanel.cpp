@@ -21,7 +21,7 @@ void OptionsPanel::Render()
 
     RenderStartStopButton(simRuns);
     RenderSteeringCubeOptions();
-    RenderVisualasationOptions();
+    RenderVisualizationOptions();
 
     ImGui::PopItemWidth();
 
@@ -84,7 +84,7 @@ void OptionsPanel::RenderSteeringCubeOptions() const
     }
 }
 
-void OptionsPanel::RenderVisualasationOptions() const
+void OptionsPanel::RenderVisualizationOptions() const
 {
     ImGui::SeparatorText("Visualisation options");
 
