@@ -22,6 +22,7 @@ void OptionsPanel::Render()
     RenderStartStopButton(simRuns);
     RenderSteeringCubeOptions();
     RenderVisualizationOptions();
+    RenderSimulationInfo();
 
     ImGui::PopItemWidth();
 
@@ -99,4 +100,11 @@ void OptionsPanel::RenderVisualizationOptions() const
     value = controller.GetRenderingNormals();
     if (ImGui::Checkbox("Render normals", &value))
         controller.SetRenderingNormals(value);
+}
+
+void OptionsPanel::RenderSimulationInfo() const
+{
+    ImGui::SeparatorText("Simulation information");
+
+    ImGui::Text("Visualization fps: %.2f", ImGui::GetIO().Framerate);
 }
