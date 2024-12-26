@@ -55,23 +55,12 @@ void Visualization::Render(const SpringGraph& springGraph, const Vector3D<Materi
     simulationArea.Render(shader, cameraMtx);
     steeringCube.Render(shader, cameraMtx);
 
-    phongShader.Use();
-    phongShader.SetCameraPosition(camera.GetPosition());
-    phongShader.SetViewMatrix(view);
-    phongShader.SetProjectionMatrix(projection);
-    phongShader.SetLightPosition(glm::vec3(10.0f, 10.f, 10.f));
+    if (renderMassPoints)
+        RenderMassPoints(view, projection, springGraph);
 
-    for (const auto& point: springGraph.MaterialPoints()) {
-        sphere.SetPosition(point.position);
-        sphere.Render(phongShader);
-    }
+    if (renderSprings)
+        RenderSprings(cameraMtx, springGraph);
 
-    // UpdateSprings(springGraph);
-    // shader.Use();
-    // shader.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));     // White
-    // shader.SetMVP(cameraMtx);
-    // springs.Use();
-    // glDrawElements(springs.GetType(), springs.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
 
     UpdateSoftBody(springGraph, bezierPointsIds);
     bezierSurfaceShader.Use();
@@ -88,17 +77,8 @@ void Visualization::Render(const SpringGraph& springGraph, const Vector3D<Materi
     glPatchParameteri(GL_PATCH_VERTICES, 16);
     glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
 
-    // normalsCheckShader.Use();
-    // normalsCheckShader.SetProjection(projection);
-    // normalsCheckShader.SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    // normalsCheckShader.SetViewMatrix(view);
-    // normalsCheckShader.SetModelMatrix(glm::mat4(1.0f));
-
-    // softBody.Use();
-    // glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
-    // glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, v);
-    // glPatchParameteri(GL_PATCH_VERTICES, 16);
-    // glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+    if (renderNormals)
+        RenderNormals(view, projection);
 
     const auto camParams = camera.GetParameters();
     grid.Render(view, projection, camParams.nearPlane, camParams.farPlane);
@@ -228,5 +208,48 @@ void Visualization::UpdateSoftBody(const SpringGraph& springGraph, const Vector3
     }
 
     softBody.Update(vertices, indices, Mesh::Type::Patches, Mesh::Usage::Dynamic);
+}
+
+
+void Visualization::RenderMassPoints(const glm::mat4& view, const glm::mat4& projection, const SpringGraph& springGraph)
+{
+    phongShader.Use();
+    phongShader.SetCameraPosition(camera.GetPosition());
+    phongShader.SetViewMatrix(view);
+    phongShader.SetProjectionMatrix(projection);
+    phongShader.SetLightPosition(glm::vec3(10.0f, 10.f, 10.f));
+
+    for (const auto& point: springGraph.MaterialPoints()) {
+        sphere.SetPosition(point.position);
+        sphere.Render(phongShader);
+    }
+}
+
+
+void Visualization::RenderSprings(const glm::mat4& cameraMtx, const SpringGraph& springGraph)
+{
+    UpdateSprings(springGraph);
+    shader.Use();
+    shader.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));     // White
+    shader.SetMVP(cameraMtx);
+    springs.Use();
+    glDrawElements(springs.GetType(), springs.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+}
+
+
+void Visualization::RenderNormals(const glm::mat4& view, const glm::mat4& projection)
+{
+    normalsCheckShader.Use();
+    normalsCheckShader.SetProjection(projection);
+    normalsCheckShader.SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    normalsCheckShader.SetViewMatrix(view);
+    normalsCheckShader.SetModelMatrix(glm::mat4(1.0f));
+
+    softBody.Use();
+    constexpr float v[] = {64.f, 64.f, 64.f, 64.f};
+    glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
+    glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, v);
+    glPatchParameteri(GL_PATCH_VERTICES, 16);
+    glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
 }
 
