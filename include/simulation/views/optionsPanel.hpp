@@ -17,5 +17,6 @@ private:
 
     void RenderStartStopButton(bool simRuns);
     void RenderSteeringCubeOptions() const;
-    void RenderVisualasationOptions() const;
+    void RenderVisualizationOptions() const;
+    void RenderSimulationInfo() const;
 };

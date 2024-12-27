@@ -21,7 +21,8 @@ void OptionsPanel::Render()
 
     RenderStartStopButton(simRuns);
     RenderSteeringCubeOptions();
-    RenderVisualasationOptions();
+    RenderVisualizationOptions();
+    RenderSimulationInfo();
 
     ImGui::PopItemWidth();
 
@@ -84,7 +85,7 @@ void OptionsPanel::RenderSteeringCubeOptions() const
     }
 }
 
-void OptionsPanel::RenderVisualasationOptions() const
+void OptionsPanel::RenderVisualizationOptions() const
 {
     ImGui::SeparatorText("Visualisation options");
 
@@ -99,4 +100,11 @@ void OptionsPanel::RenderVisualasationOptions() const
     value = controller.GetRenderingNormals();
     if (ImGui::Checkbox("Render normals", &value))
         controller.SetRenderingNormals(value);
+}
+
+void OptionsPanel::RenderSimulationInfo() const
+{
+    ImGui::SeparatorText("Simulation information");
+
+    ImGui::Text("Visualization fps: %.2f", ImGui::GetIO().Framerate);
 }
