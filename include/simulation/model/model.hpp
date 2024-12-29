@@ -15,7 +15,7 @@ public:
         { timedLoop.End(); }
 
     void UpdateSimulation()
-        { simulation.Update(); }
+        { simulation.UpdateRungeKutta(); }
 
     [[nodiscard]]
     bool IsSimulationRunning() const
@@ -27,7 +27,7 @@ public:
     void EndReadingGraph()
         { simulation.EndReadingGraph(); }
 
-    std::tuple<SpringGraph&, SpringGraph&> StartWritingGraph()
+    SpringGraph& StartWritingGraph()
         { return simulation.StartWritingGraph(); }
 
     void EndWritingGraph()

@@ -9,47 +9,42 @@
 class SpringsSimulation {
 public:
     SpringsSimulation(SpringGraph&& graph, const SimulationEnvironment& environment):
-        actSpringGraph(std::move(graph)),
-        prevSpringGraph(actSpringGraph),
+        springGraph(std::move(graph)),
         environment(environment),
-        forces(actSpringGraph.MaterialPoints().size(), glm::vec3(0.f))
+        v(springGraph.MaterialPoints().size(), glm::vec3(0.f)),
+        p(springGraph.MaterialPoints().size(), glm::vec3(0.f))
     {}
 
-    void Update();
+    void UpdateEuler();
+    void UpdateRungeKutta();
 
     const SpringGraph& StartReadingGraph() {
         simulationMutex.lock();
-        return actSpringGraph;
+        return springGraph;
     }
 
     void EndReadingGraph()
         { simulationMutex.unlock(); }
 
 
-    std::tuple<SpringGraph&, SpringGraph&> StartWritingGraph() {
+    SpringGraph& StartWritingGraph() {
         simulationMutex.lock();
-        return { actSpringGraph, prevSpringGraph };
+        return springGraph;
     }
 
     void EndWritingGraph()
         { simulationMutex.unlock(); }
 
 private:
-    SpringGraph actSpringGraph;
-    SpringGraph prevSpringGraph;
-
+    SpringGraph springGraph;
     SimulationEnvironment environment;
-
-    std::vector<glm::vec3> forces;
-
-    // std::vector<glm::vec3> prevVelocities;
-    // std::vector<glm::vec3> velocities;
-    //
-    // std::vector<glm::vec3> prevPositions;
-    // std::vector<glm::vec3> positions;
-
     std::mutex simulationMutex;
 
-    void Forces();
-    void MovePoints();
+    std::vector<glm::vec3> v;
+    std::vector<glm::vec3> p;
+
+    glm::vec3 ViscousDampingForce(const glm::vec3& v) const;
+    glm::vec3 SpringForce(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& v1, const glm::vec3& v2, float springCoef, float springLen) const;
+
+    static float DotI(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& v1, const glm::vec3& v2);
 };

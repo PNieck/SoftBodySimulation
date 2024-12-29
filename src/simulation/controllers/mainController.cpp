@@ -244,7 +244,7 @@ void MainController::UpdateSteeringMaterialPoints() {
     const float len = steeringCube.GetEdgeLength() / 2.0f * std::sqrt(3.f);
     const auto& rotation = steeringCube.RotationQuat();
 
-    auto graphs = model.StartWritingGraph();
+    auto& graph = model.StartWritingGraph();
 
     for (int x=0; x < 2; x++) {
         for (int y=0; y < 2; y++) {
@@ -260,8 +260,7 @@ void MainController::UpdateSteeringMaterialPoints() {
 
                 newPosition = rotate(rotation, newPosition);
                 newPosition += cubePosition;
-                std::get<0>(graphs).GetMaterialPoint(id).position = newPosition;
-                std::get<1>(graphs).GetMaterialPoint(id).position = newPosition;
+                graph.GetMaterialPoint(id).position = newPosition;
             }
         }
     }
