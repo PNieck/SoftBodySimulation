@@ -43,7 +43,8 @@ private:
     std::vector<glm::vec3> v;
     std::vector<glm::vec3> p;
 
-    glm::vec3 SpringForce(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& v1, const glm::vec3& v2, float springCoef, float springLen);
+    glm::vec3 ViscousDampingForce(const glm::vec3& v) const;
+    glm::vec3 SpringForce(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& v1, const glm::vec3& v2, float springCoef, float springLen) const;
 
     static float DotI(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& v1, const glm::vec3& v2);
 };
