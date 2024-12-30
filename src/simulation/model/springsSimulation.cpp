@@ -31,11 +31,7 @@ void SpringsSimulation::UpdateEuler()
         v[i] += environment.deltaT * forceAcc / mp1.mass;
     }
 
-    for (int i=0; i < springGraph.GetNeighbours().size(); i++) {
-        auto& mp1 = springGraph.GetMaterialPoint(i);
-        mp1.position += p[i];
-        mp1.velocity += v[i];
-    }
+    UpdatePositionsAndVelocities();
 }
 
 void SpringsSimulation::UpdateRungeKutta() {
@@ -120,13 +116,7 @@ void SpringsSimulation::UpdateRungeKutta() {
         v[i] += environment.deltaT/6.f * (k1_v + 2.f*k2_v + 2.f*k3_v + k4_v);
     }
 
-
-
-    for (int i=0; i < springGraph.GetNeighbours().size(); i++) {
-        auto& mp1 = springGraph.GetMaterialPoint(i);
-        mp1.position += p[i];
-        mp1.velocity += v[i];
-    }
+    UpdatePositionsAndVelocities();
 }
 
 
@@ -156,5 +146,19 @@ float SpringsSimulation::DotI(const glm::vec3 &p1, const glm::vec3 &p2, const gl
         return 0.f;
 
     return dot(p1 - p2, v1 - v2) / len;
+}
+
+
+void SpringsSimulation::UpdatePositionsAndVelocities() {
+    for (int i=0; i < springGraph.GetNeighbours().size(); i++) {
+        auto& mp1 = springGraph.GetMaterialPoint(i);
+        if (mp1.mass == std::numeric_limits<float>::infinity())
+            continue;
+
+        mp1.position += p[i];
+        mp1.velocity += v[i];
+
+        boxCollider.Collide(mp1.position, p[i], mp1.velocity);
+    }
 }
 
