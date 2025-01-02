@@ -20,14 +20,16 @@ glm::mat4 RenderObject::ModelMatrix() const
 }
 
 
-glm::mat4 RenderObject::ModelMatrixInverse() const {
+glm::mat4 RenderObject::ModelMatrixInverse() const
+{
     auto result = transpose(RotationMatrix());
     result = glm::scale(result, glm::vec3(1.f/scale.x, 1.f/scale.y, 1.f/scale.z));
     return translate(result, -translation);
 }
 
 
-void RenderObject::Render(const StdShader &shader, const glm::mat4& cameraMtx) const {
+void RenderObject::Render(const StdShader &shader, const glm::mat4& cameraMtx) const
+{
     shader.SetColor(color);
     shader.SetMVP(cameraMtx * ModelMatrix());
     UseMesh();
@@ -35,10 +37,21 @@ void RenderObject::Render(const StdShader &shader, const glm::mat4& cameraMtx) c
 }
 
 
-void RenderObject::Render(const PhongShader &shader) const {
+void RenderObject::Render(const PhongShader &shader) const
+{
     shader.SetColor(color);
     shader.SetModelMatrix(ModelMatrix());
     shader.SetModelMatrixInverse(ModelMatrixInverse());
+
+    UseMesh();
+
+    glDrawElements(mesh.GetType(), mesh.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+}
+
+
+void RenderObject::Render(const BezierCubeShader &shader) const
+{
+    shader.SetColor(color);
 
     UseMesh();
 

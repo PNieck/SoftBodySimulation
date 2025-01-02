@@ -42,3 +42,24 @@ public:
         glEnableVertexAttribArray(1);
     }
 };
+
+
+class BezierCubeCoordinatesWithNormals {
+public:
+    BezierCubeCoordinatesWithNormals(const glm::vec3& pos, const glm::vec3& normalPos):
+        position(pos), normalPosition(normalPos) {}
+
+    BezierCubeCoordinatesWithNormals(const glm::vec3& pos, const glm::vec3& normal, float normalLen):
+        position(pos), normalPosition(pos + normal * normalLen) {}
+
+    glm::vec3 position;
+    glm::vec3 normalPosition;
+
+    static void SetupAttributes() {
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(sizeof(float)*3));
+        glEnableVertexAttribArray(1);
+    }
+};

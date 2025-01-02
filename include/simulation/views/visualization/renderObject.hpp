@@ -8,6 +8,7 @@
 
 #include "shaders/stdShader.hpp"
 #include "shaders/phongShader.hpp"
+#include "shaders/bezierCubeShader.hpp"
 
 
 class RenderObject {
@@ -83,6 +84,8 @@ public:
     void Render(const StdShader& shader, const glm::mat4& cameraMtx) const;
 
     void Render(const PhongShader& shader) const;
+
+    void Render(const BezierCubeShader& shader) const;
 
     [[nodiscard]]
     int MeshElements() const

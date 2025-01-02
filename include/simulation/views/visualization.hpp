@@ -7,6 +7,7 @@
 #include "visualization/shaders/phongShader.hpp"
 #include "visualization/shaders/bezierSurfaceShader.hpp"
 #include "visualization/shaders/normalsCheckShader.hpp"
+#include "visualization/shaders/bezierCubeShader.hpp"
 #include "visualization/framebuffer.hpp"
 #include "visualization/steeringCube.hpp"
 
@@ -66,6 +67,7 @@ private:
     RenderObject simulationArea;
     SteeringCube steeringCube;
     RenderObject sphere;
+    RenderObject monkey;
     Mesh softBody;
     Mesh springs;
 
@@ -75,6 +77,7 @@ private:
     PhongShader phongShader;
     BicubicBezierSurfaceShader bezierSurfaceShader;
     NormalsCheckShader normalsCheckShader;
+    BezierCubeShader bezierCubeShader;
 
     void UpdateSprings(const SpringGraph& springGraph);
     void UpdateSoftBody(const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds);

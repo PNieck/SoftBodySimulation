@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <numbers>
+#include <array>
 
 #include <simulation/views/visualization/meshFactory.hpp>
 
@@ -33,6 +34,8 @@ Visualization::Visualization(const int xResolution, const int yResolution):
     MeshFactory::CubeWireframe<PositionVertex>(simulationArea.GetMesh());
     MeshFactory::LoadFromFile<PosNormalVertex>(sphere.GetMesh(), "../../models/icosphere.obj");
     sphere.SetScale(0.01f);
+
+    MeshFactory::LoadFromFile<BezierCubeCoordinatesWithNormals>(monkey.GetMesh(), "../../models/monkey.obj");
 }
 
 
@@ -62,23 +65,41 @@ void Visualization::Render(const SpringGraph& springGraph, const Vector3D<Materi
         RenderSprings(cameraMtx, springGraph);
 
 
-    UpdateSoftBody(springGraph, bezierPointsIds);
-    bezierSurfaceShader.Use();
-    bezierSurfaceShader.SetColor(glm::vec4(0.145f, 0.604f, 0.831f, 1.f));
-    bezierSurfaceShader.SetProjection(projection);
-    bezierSurfaceShader.SetModelMatrix(glm::mat4(1.f));
-    bezierSurfaceShader.SetViewMatrix(view);
-    bezierSurfaceShader.SetLightPosition(glm::vec3(10.0f, 10.f, 10.f));
-    bezierSurfaceShader.SetCameraPosition(camera.GetPosition());
+    // UpdateSoftBody(springGraph, bezierPointsIds);
+    // bezierSurfaceShader.Use();
+    // bezierSurfaceShader.SetColor(glm::vec4(0.145f, 0.604f, 0.831f, 1.f));
+    // bezierSurfaceShader.SetProjection(projection);
+    // bezierSurfaceShader.SetModelMatrix(glm::mat4(1.f));
+    // bezierSurfaceShader.SetViewMatrix(view);
+    // bezierSurfaceShader.SetLightPosition(glm::vec3(10.0f, 10.f, 10.f));
+    // bezierSurfaceShader.SetCameraPosition(camera.GetPosition());
+    //
+    // softBody.Use();
+    // constexpr float v[] = {64.f, 64.f, 64.f, 64.f};
+    // glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
+    // glPatchParameteri(GL_PATCH_VERTICES, 16);
+    // glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+    //
+    // if (renderNormals)
+    //     RenderNormals(view, projection);
 
-    softBody.Use();
-    constexpr float v[] = {64.f, 64.f, 64.f, 64.f};
-    glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
-    glPatchParameteri(GL_PATCH_VERTICES, 16);
-    glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+    std::array<glm::vec3, 64> cps;
 
-    if (renderNormals)
-        RenderNormals(view, projection);
+
+    for (int i = 0; i < 4; i++) {
+        for (int j=0; j<4; j++) {
+            for (int k=0; k<4; k++) {
+                cps[i + 4*j + 16*k] = springGraph.GetMaterialPoint(bezierPointsIds.At(i, j, k)).position;
+            }
+        }
+    }
+
+    bezierCubeShader.Use();
+    bezierCubeShader.SetCameraMatrix(cameraMtx);
+    bezierCubeShader.SetCameraPos(camera.GetPosition());
+    bezierCubeShader.SetControlPoints(cps.data());
+    bezierCubeShader.SetLightPos(glm::vec3(10.0f, 10.f, 10.f));
+    monkey.Render(bezierCubeShader);
 
     const auto camParams = camera.GetParameters();
     grid.Render(view, projection, camParams.nearPlane, camParams.farPlane);
