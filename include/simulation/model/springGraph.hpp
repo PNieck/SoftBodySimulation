@@ -39,6 +39,10 @@ public:
         { return springs.at(id); }
 
     [[nodiscard]]
+    Spring& GetSpring(const SpringId id)
+        { return springs.at(id); }
+
+    [[nodiscard]]
     const std::vector<Spring>& Springs() const
         { return springs; }
 

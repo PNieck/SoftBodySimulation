@@ -87,11 +87,21 @@ public:
 
     void DisturbSoftBody(float maxDisturb);
 
+    void SetBezierSpringsCoefficient(float coefficient);
+
+    float GetBezierSpringsCoefficient() const
+        { return bezierSpringCoef; }
+
+    void SetSteeringSpringsCoefficient(float coefficient);
+
+    float GetSteeringSpringsCoefficient() const
+        { return steeringSpringCoef; }
+
 private:
     static constexpr float initialMaterialPointMass = 1.f;
     static constexpr float steeringCubeEdgeLen = 0.2f;
     static constexpr float initialBezierSpringsCoef = 5.f;
-    static constexpr float steeringSpringsCoef = 30.f;
+    static constexpr float initialSteeringSpringsCoef = 30.f;
 
     MouseState mouseState;
 
@@ -101,7 +111,12 @@ private:
 
     Vector3D<MaterialPointId> bezierPointsIds;
     Vector3D<MaterialPointId> steeringPointsIds;
+    std::vector<SpringId> bezierSprings;
+    std::vector<SpringId> steeringSprings;
     Model model;
+
+    float bezierSpringCoef = initialBezierSpringsCoef;
+    float steeringSpringCoef = initialSteeringSpringsCoef;
 
     [[nodiscard]]
     bool WantToCaptureMouse() const

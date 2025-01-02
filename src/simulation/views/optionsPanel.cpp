@@ -17,10 +17,13 @@ void OptionsPanel::Render() const
 
     ImGui::PushItemWidth(-FLT_MIN);
 
-    RenderStartStopButton();
+    const bool simRuns = controller.SimulationIsRunning();
+
+    RenderStartStopButton(simRuns);
     RenderSteeringCubeOptions();
     RenderVisualizationOptions();
     RenderDisturbOptions();
+    RenderSimulationOptions(simRuns);
     RenderSimulationInfo();
 
     ImGui::PopItemWidth();
@@ -29,10 +32,8 @@ void OptionsPanel::Render() const
 }
 
 
-void OptionsPanel::RenderStartStopButton() const
+void OptionsPanel::RenderStartStopButton(const bool simRuns) const
 {
-    const bool simRuns = controller.SimulationIsRunning();
-
     ImGui::BeginDisabled(simRuns);
     if (ImGui::Button("Start")) {
         controller.StartSimulation();
@@ -113,15 +114,35 @@ void OptionsPanel::RenderDisturbOptions() const
     ImGui::SeparatorText("Disturb soft body");
 
     static float maxDisturb = 5.f;
-    ImGui::DragFloat("Max Disturb", &maxDisturb, 0.01f);
+    ImGui::Text("Max disturb");
+    ImGui::DragFloat("##maxDisturb", &maxDisturb, 0.01f);
 
     if (ImGui::Button("Disturb"))
         controller.DisturbSoftBody(maxDisturb);
 }
 
 
-void OptionsPanel::RenderSimulationInfo() const
+void OptionsPanel::RenderSimulationOptions(const bool simRuns) const
 {
+    ImGui::SeparatorText("Simulation options");
+
+    ImGui::BeginDisabled(simRuns);
+
+    float value = controller.GetBezierSpringsCoefficient();
+    ImGui::Text("Bezier cube springs coefficient");
+    if (ImGui::DragFloat("##bezierSpringsCoef", &value, 1.0f, 0.01f, 100.f))
+        controller.SetBezierSpringsCoefficient(value);
+
+    value = controller.GetSteeringSpringsCoefficient();
+    ImGui::Text("Steering cube springs coefficient");
+    if (ImGui::DragFloat("##steeringSpringsCoef", &value, 1.0f, 0.01f, 100.f))
+        controller.SetSteeringSpringsCoefficient(value);
+
+    ImGui::EndDisabled();
+}
+
+
+void OptionsPanel::RenderSimulationInfo() {
     ImGui::SeparatorText("Simulation information");
 
     ImGui::Text("Visualization fps: %.2f", ImGui::GetIO().Framerate);

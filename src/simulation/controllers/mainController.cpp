@@ -137,8 +137,40 @@ void MainController::DisturbSoftBody(const float maxDisturb)
 }
 
 
+void MainController::SetBezierSpringsCoefficient(const float coefficient)
+{
+    auto& graph = model.StartWritingGraph();
+    bezierSpringCoef = coefficient;
+
+    for (const auto springId : bezierSprings) {
+        graph.GetSpring(springId).springCoef = coefficient;
+    }
+
+    model.EndWritingGraph();
+}
+
+
+void MainController::SetSteeringSpringsCoefficient(const float coefficient)
+{
+    auto& graph = model.StartWritingGraph();
+    steeringSpringCoef = coefficient;
+
+    for (const auto springId : steeringSprings) {
+        graph.GetSpring(springId).springCoef = coefficient;
+    }
+
+    model.EndWritingGraph();
+}
+
+
 SpringGraph MainController::InitialSpringGraph() {
-    SpringGraph result(64 + 8, 396 + 8);
+    constexpr int bezierSpringsCnt = 396;
+    constexpr int steeringSpringsCnt = 8;
+
+    SpringGraph result(64 + 8, bezierSpringsCnt * steeringSpringsCnt);
+
+    steeringSprings.reserve(steeringSpringsCnt);
+    bezierSprings.reserve(bezierSpringsCnt);
 
     constexpr glm::vec3 startPoint(-steeringCubeEdgeLen/2.f);
     constexpr glm::vec3 vecX(1.f, 0.f, 0.f);
@@ -195,63 +227,81 @@ SpringGraph MainController::InitialSpringGraph() {
                     SpringId end1 = bezierPointsIds.At(x, y, z);
                     SpringId end2 = bezierPointsIds.At(x + 1, y, z);
 
-                    result.AddSpring(stdSpringLen, initialBezierSpringsCoef, end1, end2);
+                    bezierSprings.push_back(
+                        result.AddSpring(stdSpringLen, initialBezierSpringsCoef, end1, end2)
+                    );
                 }
 
                 if (y != bezierPointsIds.SizeY() - 1) {
                     SpringId end1 = bezierPointsIds.At(x, y, z);
                     SpringId end2 = bezierPointsIds.At(x, y + 1, z);
 
-                    result.AddSpring(stdSpringLen, initialBezierSpringsCoef, end1, end2);
+                    bezierSprings.push_back(
+                        result.AddSpring(stdSpringLen, initialBezierSpringsCoef, end1, end2)
+                    );
                 }
 
                 if (z != bezierPointsIds.SizeZ() - 1) {
                     SpringId end1 = bezierPointsIds.At(x, y, z);
                     SpringId end2 = bezierPointsIds.At(x, y, z + 1);
 
-                    result.AddSpring(stdSpringLen, initialBezierSpringsCoef, end1, end2);
+                    bezierSprings.push_back(
+                        result.AddSpring(stdSpringLen, initialBezierSpringsCoef, end1, end2)
+                    );
                 }
 
                 if (x != bezierPointsIds.SizeX() - 1 && y != bezierPointsIds.SizeY() - 1) {
                     SpringId end1 = bezierPointsIds.At(x, y, z);
                     SpringId end2 = bezierPointsIds.At(x + 1, y + 1, z);
 
-                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                    bezierSprings.push_back(
+                        result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2)
+                    );
                 }
 
                 if (x != bezierPointsIds.SizeX() - 1 && z != bezierPointsIds.SizeZ() - 1) {
                     SpringId end1 = bezierPointsIds.At(x, y, z);
                     SpringId end2 = bezierPointsIds.At(x + 1, y, z + 1);
 
-                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                    bezierSprings.push_back(
+                        result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2)
+                    );
                 }
 
                 if (y != bezierPointsIds.SizeY() - 1 && z != bezierPointsIds.SizeZ() - 1) {
                     SpringId end1 = bezierPointsIds.At(x, y, z);
                     SpringId end2 = bezierPointsIds.At(x, y + 1, z + 1);
 
-                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                    bezierSprings.push_back(
+                        result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2)
+                    );
                 }
 
                 if (x != bezierPointsIds.SizeX() - 1 && y != 0) {
                     SpringId end1 = bezierPointsIds.At(x, y, z);
                     SpringId end2 = bezierPointsIds.At(x + 1, y - 1, z);
 
-                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                    bezierSprings.push_back(
+                        result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2)
+                    );
                 }
 
                 if (x != bezierPointsIds.SizeX() - 1 && z != 0) {
                     SpringId end1 = bezierPointsIds.At(x, y, z);
                     SpringId end2 = bezierPointsIds.At(x + 1, y, z - 1);
 
-                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                    bezierSprings.push_back(
+                        result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2)
+                    );
                 }
 
                 if (y != bezierPointsIds.SizeY() - 1 && z != 0) {
                     SpringId end1 = bezierPointsIds.At(x, y, z);
                     SpringId end2 = bezierPointsIds.At(x, y + 1, z - 1);
 
-                    result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2);
+                    bezierSprings.push_back(
+                        result.AddSpring(diagonalSpringLen, initialBezierSpringsCoef, end1, end2)
+                    );
                 }
             }
         }
@@ -263,7 +313,9 @@ SpringGraph MainController::InitialSpringGraph() {
                 SpringId end1 = steeringPointsIds.At(x, y, z);
                 SpringId end2 = bezierPointsIds.At(3*x, 3*y, 3*z);
 
-                result.AddSpring(0.f, steeringSpringsCoef, end1, end2);
+                steeringSprings.push_back(
+                    result.AddSpring(0.f, initialSteeringSpringsCoef, end1, end2)
+                );
             }
         }
     }
