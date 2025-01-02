@@ -73,6 +73,18 @@ public:
     bool GetRenderingSprings() const
         { return visualization.renderSprings; }
 
+    void SetRenderMonkey(const bool v)
+        { visualization.renderMonkey = v; }
+
+    bool GetRenderMonkey() const
+        { return visualization.renderMonkey; }
+
+    void SetRenderCube(const bool v)
+        { visualization.renderCube = v; }
+
+    bool GetRenderCube() const
+        { return visualization.renderCube; }
+
 private:
     static constexpr float initialMaterialPointMass = 1.f;
     static constexpr float steeringCubeEdgeLen = 0.2f;

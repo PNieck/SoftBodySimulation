@@ -56,6 +56,8 @@ public:
     bool renderMassPoints = false;
     bool renderSprings = false;
     bool renderNormals = false;
+    bool renderCube = true;
+    bool renderMonkey = false;
 private:
     bool mouseIsOver = false;
 
@@ -80,9 +82,11 @@ private:
     BezierCubeShader bezierCubeShader;
 
     void UpdateSprings(const SpringGraph& springGraph);
-    void UpdateSoftBody(const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds);
+    void UpdateCube(const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds);
 
     void RenderMassPoints(const glm::mat4& view, const glm::mat4& projection, const SpringGraph& springGraph);
     void RenderSprings(const glm::mat4& cameraMtx, const SpringGraph& springGraph);
     void RenderNormals(const glm::mat4& view, const glm::mat4& projection);
+    void RenderCube(const glm::mat4& view, const glm::mat4& projection) const;
+    void RenderMonkey(const glm::mat4& cameraMtx, const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds) const;
 };

@@ -64,42 +64,17 @@ void Visualization::Render(const SpringGraph& springGraph, const Vector3D<Materi
     if (renderSprings)
         RenderSprings(cameraMtx, springGraph);
 
+    if (renderNormals || renderCube)
+        UpdateCube(springGraph, bezierPointsIds);
 
-    // UpdateSoftBody(springGraph, bezierPointsIds);
-    // bezierSurfaceShader.Use();
-    // bezierSurfaceShader.SetColor(glm::vec4(0.145f, 0.604f, 0.831f, 1.f));
-    // bezierSurfaceShader.SetProjection(projection);
-    // bezierSurfaceShader.SetModelMatrix(glm::mat4(1.f));
-    // bezierSurfaceShader.SetViewMatrix(view);
-    // bezierSurfaceShader.SetLightPosition(glm::vec3(10.0f, 10.f, 10.f));
-    // bezierSurfaceShader.SetCameraPosition(camera.GetPosition());
-    //
-    // softBody.Use();
-    // constexpr float v[] = {64.f, 64.f, 64.f, 64.f};
-    // glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
-    // glPatchParameteri(GL_PATCH_VERTICES, 16);
-    // glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
-    //
-    // if (renderNormals)
-    //     RenderNormals(view, projection);
+    if (renderCube)
+        RenderCube(view, projection);
 
-    std::array<glm::vec3, 64> cps;
+    if (renderNormals)
+        RenderNormals(view, projection);
 
-
-    for (int i = 0; i < 4; i++) {
-        for (int j=0; j<4; j++) {
-            for (int k=0; k<4; k++) {
-                cps[i + 4*j + 16*k] = springGraph.GetMaterialPoint(bezierPointsIds.At(i, j, k)).position;
-            }
-        }
-    }
-
-    bezierCubeShader.Use();
-    bezierCubeShader.SetCameraMatrix(cameraMtx);
-    bezierCubeShader.SetCameraPos(camera.GetPosition());
-    bezierCubeShader.SetControlPoints(cps.data());
-    bezierCubeShader.SetLightPos(glm::vec3(10.0f, 10.f, 10.f));
-    monkey.Render(bezierCubeShader);
+    if (renderMonkey)
+        RenderMonkey(cameraMtx, springGraph, bezierPointsIds);
 
     const auto camParams = camera.GetParameters();
     grid.Render(view, projection, camParams.nearPlane, camParams.farPlane);
@@ -154,7 +129,7 @@ void Visualization::UpdateSprings(const SpringGraph &springGraph) {
 }
 
 
-void Visualization::UpdateSoftBody(const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds) {
+void Visualization::UpdateCube(const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds) {
     std::vector<PositionVertex> vertices;
     std::vector<uint32_t> indices;
     int i=0;
@@ -272,5 +247,44 @@ void Visualization::RenderNormals(const glm::mat4& view, const glm::mat4& projec
     glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, v);
     glPatchParameteri(GL_PATCH_VERTICES, 16);
     glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+}
+
+
+void Visualization::RenderCube(const glm::mat4& view, const glm::mat4& projection) const
+{
+    bezierSurfaceShader.Use();
+    bezierSurfaceShader.SetColor(glm::vec4(0.145f, 0.604f, 0.831f, 1.f));
+    bezierSurfaceShader.SetProjection(projection);
+    bezierSurfaceShader.SetModelMatrix(glm::mat4(1.f));
+    bezierSurfaceShader.SetViewMatrix(view);
+    bezierSurfaceShader.SetLightPosition(glm::vec3(10.0f, 10.f, 10.f));
+    bezierSurfaceShader.SetCameraPosition(camera.GetPosition());
+
+    softBody.Use();
+    constexpr float v[] = {64.f, 64.f, 64.f, 64.f};
+    glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, v);
+    glPatchParameteri(GL_PATCH_VERTICES, 16);
+    glDrawElements(softBody.GetType(), softBody.GetElementsCnt(), GL_UNSIGNED_INT, nullptr);
+}
+
+
+void Visualization::RenderMonkey(const glm::mat4& cameraMtx, const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds) const
+{
+    std::array<glm::vec3, 64> cps;
+
+    for (int i = 0; i < 4; i++) {
+        for (int j=0; j<4; j++) {
+            for (int k=0; k<4; k++) {
+                cps[i + 4*j + 16*k] = springGraph.GetMaterialPoint(bezierPointsIds.At(i, j, k)).position;
+            }
+        }
+    }
+
+    bezierCubeShader.Use();
+    bezierCubeShader.SetCameraMatrix(cameraMtx);
+    bezierCubeShader.SetCameraPos(camera.GetPosition());
+    bezierCubeShader.SetControlPoints(cps.data());
+    bezierCubeShader.SetLightPos(glm::vec3(10.0f, 10.f, 10.f));
+    monkey.Render(bezierCubeShader);
 }
 

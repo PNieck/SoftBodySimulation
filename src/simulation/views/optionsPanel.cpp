@@ -15,11 +15,9 @@ void OptionsPanel::Render()
 {
     ImGui::Begin(WindowName());
 
-    const bool simRuns = controller.SimulationIsRunning();
-
     ImGui::PushItemWidth(-FLT_MIN);
 
-    RenderStartStopButton(simRuns);
+    RenderStartStopButton();
     RenderSteeringCubeOptions();
     RenderVisualizationOptions();
     RenderSimulationInfo();
@@ -30,8 +28,10 @@ void OptionsPanel::Render()
 }
 
 
-void OptionsPanel::RenderStartStopButton(const bool simRuns)
+void OptionsPanel::RenderStartStopButton() const
 {
+    const bool simRuns = controller.SimulationIsRunning();
+
     ImGui::BeginDisabled(simRuns);
     if (ImGui::Button("Start")) {
         controller.StartSimulation();
@@ -49,10 +49,6 @@ void OptionsPanel::RenderStartStopButton(const bool simRuns)
     ImGui::BeginDisabled(simRuns);
     if (ImGui::Button("Update")) {
         controller.UpdateSimulation();
-    }
-
-    if (ImGui::Button("Reset")) {
-        //controller.SetProperties(properties);
     }
     ImGui::EndDisabled();
 }
@@ -98,8 +94,16 @@ void OptionsPanel::RenderVisualizationOptions() const
         controller.SetRenderingMassPoints(value);
 
     value = controller.GetRenderingNormals();
-    if (ImGui::Checkbox("Render normals", &value))
+    if (ImGui::Checkbox("Render cube normals", &value))
         controller.SetRenderingNormals(value);
+
+    value = controller.GetRenderCube();
+    if (ImGui::Checkbox("Render cube", &value))
+        controller.SetRenderCube(value);
+
+    value = controller.GetRenderMonkey();
+    if (ImGui::Checkbox("Render monkey", &value))
+        controller.SetRenderMonkey(value);
 }
 
 void OptionsPanel::RenderSimulationInfo() const
