@@ -7,6 +7,7 @@
 #include "visualization/shaders/phongShader.hpp"
 #include "visualization/shaders/bezierSurfaceShader.hpp"
 #include "visualization/shaders/normalsCheckShader.hpp"
+#include "visualization/shaders/bezierCubeShader.hpp"
 #include "visualization/framebuffer.hpp"
 #include "visualization/steeringCube.hpp"
 
@@ -55,6 +56,8 @@ public:
     bool renderMassPoints = false;
     bool renderSprings = false;
     bool renderNormals = false;
+    bool renderCube = true;
+    bool renderMonkey = false;
 private:
     bool mouseIsOver = false;
 
@@ -66,6 +69,7 @@ private:
     RenderObject simulationArea;
     SteeringCube steeringCube;
     RenderObject sphere;
+    RenderObject monkey;
     Mesh softBody;
     Mesh springs;
 
@@ -75,11 +79,14 @@ private:
     PhongShader phongShader;
     BicubicBezierSurfaceShader bezierSurfaceShader;
     NormalsCheckShader normalsCheckShader;
+    BezierCubeShader bezierCubeShader;
 
     void UpdateSprings(const SpringGraph& springGraph);
-    void UpdateSoftBody(const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds);
+    void UpdateCube(const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds);
 
     void RenderMassPoints(const glm::mat4& view, const glm::mat4& projection, const SpringGraph& springGraph);
     void RenderSprings(const glm::mat4& cameraMtx, const SpringGraph& springGraph);
     void RenderNormals(const glm::mat4& view, const glm::mat4& projection);
+    void RenderCube(const glm::mat4& view, const glm::mat4& projection) const;
+    void RenderMonkey(const glm::mat4& cameraMtx, const SpringGraph& springGraph, const Vector3D<MaterialPointId>& bezierPointsIds) const;
 };

@@ -123,6 +123,13 @@ void Shader::SetMatrix4(const std::string &name, const glm::mat4 &matrix) const
 }
 
 
+void Shader::SetVec3Array(const std::string &name, const glm::vec3 *vec, const int count) const
+{
+    const int location = FindUniformLocation(name);
+    glUniform3fv(location, count, reinterpret_cast<const GLfloat*>(vec));
+}
+
+
 int Shader::FindUniformLocation(const std::string & name) const
 {
     const int location = glGetUniformLocation(id, name.c_str());
@@ -141,7 +148,7 @@ const char * UniformNotFoundInShader::what() const noexcept
 }
 
 
-unsigned int Shader::CompileSingleShader(const char* path, GLenum shaderType)
+unsigned int Shader::CompileSingleShader(const char* path, const GLenum shaderType)
 {
     std::ifstream shaderFile;
 
@@ -153,10 +160,10 @@ unsigned int Shader::CompileSingleShader(const char* path, GLenum shaderType)
     shaderStream << shaderFile.rdbuf();
     shaderFile.close();
 
-    std::string shaderCode = shaderStream.str();
+    const std::string shaderCode = shaderStream.str();
     const char* shaderCodeCStr = shaderCode.c_str();
 
-    unsigned int shader = glCreateShader(shaderType);
+    const unsigned int shader = glCreateShader(shaderType);
     glShaderSource(shader, 1, &shaderCodeCStr, nullptr);
     glCompileShader(shader);
 

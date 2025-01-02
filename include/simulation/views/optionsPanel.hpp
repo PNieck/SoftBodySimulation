@@ -15,7 +15,7 @@ public:
 private:
     MainController& controller;
 
-    void RenderStartStopButton(bool simRuns);
+    void RenderStartStopButton() const;
     void RenderSteeringCubeOptions() const;
     void RenderVisualizationOptions() const;
     void RenderSimulationInfo() const;
