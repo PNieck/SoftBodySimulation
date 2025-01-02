@@ -11,6 +11,9 @@ public:
         maxCoordinate(wallLen / 2.f), collisionDampingCoef(collisionDampingCoef) {}
 
     void Collide(glm::vec3& newPos, const glm::vec3& deltaPos, glm::vec3& newVel) const;
+
+    void SetWallLen(const float wallLen)
+        { maxCoordinate = wallLen / 2.f; }
 private:
     float maxCoordinate;
     float collisionDampingCoef;

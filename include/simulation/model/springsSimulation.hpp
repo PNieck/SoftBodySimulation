@@ -37,6 +37,11 @@ public:
     void EndWritingGraph()
         { simulationMutex.unlock(); }
 
+    void SetSimulationEnv(const SimulationEnvironment& environment);
+
+    const SimulationEnvironment& GetSimulationEnv() const
+        { return environment; }
+
 private:
     SpringGraph springGraph;
     SimulationEnvironment environment;

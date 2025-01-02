@@ -138,6 +138,35 @@ void OptionsPanel::RenderSimulationOptions(const bool simRuns) const
     if (ImGui::DragFloat("##steeringSpringsCoef", &value, 1.0f, 0.01f, 100.f))
         controller.SetSteeringSpringsCoefficient(value);
 
+    auto env = controller.GetSimulationEnvironment();
+    bool envChanged = false;
+    ImGui::Text("String damping");
+    if (ImGui::DragFloat("##springDamping", &env.springDamping, 1.f, 0.f, 100.f)) {
+        env.springDamping = std::max(0.f, env.springDamping);
+        envChanged = true;
+    }
+
+    ImGui::Text("Viscous damping");
+    if (ImGui::DragFloat("##viscousDamping", &env.viscousDamping, 0.1f, 0.f, 1.f)) {
+        env.viscousDamping = std::max(0.f, env.viscousDamping);
+        envChanged = true;
+    }
+
+    ImGui::Text("Collision damping");
+    if (ImGui::DragFloat("##collisionDamping", &env.collisionDamping, 0.1f, 0.f, 1.f)) {
+        env.collisionDamping = std::max(0.f, env.collisionDamping);
+        envChanged = true;
+    }
+
+    ImGui::Text("Simulation area");
+    envChanged |= ImGui::DragFloat("##simulationArea", &env.simulationAreaEdgeLength, 0.1, 0.2, 10.f);
+
+    ImGui::Text("Simulation delta time");
+    envChanged |= ImGui::DragFloat("##deltaTime", &env.deltaT, 0.001f, 0.001, 0.1f);
+
+    if (envChanged)
+        controller.SetSimulationEnvironment(env);
+
     ImGui::EndDisabled();
 }
 

@@ -163,6 +163,13 @@ void MainController::SetSteeringSpringsCoefficient(const float coefficient)
 }
 
 
+void MainController::SetSimulationEnvironment(const SimulationEnvironment &environment)
+{
+    visualization.SetSimulationProperties(environment);
+    model.SetEnvironment(environment);
+}
+
+
 SpringGraph MainController::InitialSpringGraph() {
     constexpr int bezierSpringsCnt = 396;
     constexpr int steeringSpringsCnt = 8;

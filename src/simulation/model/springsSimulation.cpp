@@ -120,6 +120,13 @@ void SpringsSimulation::UpdateRungeKutta() {
 }
 
 
+void SpringsSimulation::SetSimulationEnv(const SimulationEnvironment &environment)
+{
+    this->environment = environment;
+    boxCollider.SetWallLen(environment.simulationAreaEdgeLength);
+}
+
+
 glm::vec3 SpringsSimulation::ViscousDampingForce(const glm::vec3 &v) const {
     return -environment.viscousDamping * v;
 }

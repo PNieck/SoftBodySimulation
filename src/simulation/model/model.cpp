@@ -7,3 +7,10 @@ Model::Model(SpringGraph &&graph, const SimulationEnvironment &env):
 {
 }
 
+
+void Model::SetEnvironment(const SimulationEnvironment &env)
+{
+    timedLoop.ChangePeriod(static_cast<int>(env.deltaT * 1000.f));
+    simulation.SetSimulationEnv(env);
+}
+

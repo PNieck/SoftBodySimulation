@@ -32,6 +32,12 @@ public:
 
     void EndWritingGraph()
         { simulation.EndWritingGraph(); }
+
+    void SetEnvironment(const SimulationEnvironment& env);
+
+    const SimulationEnvironment& GetEnvironment() const
+        { return simulation.GetSimulationEnv(); }
+
 private:
     TimedLoop timedLoop;
     SpringsSimulation simulation;

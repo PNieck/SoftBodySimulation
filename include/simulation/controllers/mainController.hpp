@@ -97,6 +97,11 @@ public:
     float GetSteeringSpringsCoefficient() const
         { return steeringSpringCoef; }
 
+    const SimulationEnvironment& GetSimulationEnvironment() const
+        { return model.GetEnvironment(); }
+
+    void SetSimulationEnvironment(const SimulationEnvironment& environment);
+
 private:
     static constexpr float initialMaterialPointMass = 1.f;
     static constexpr float steeringCubeEdgeLen = 0.2f;
