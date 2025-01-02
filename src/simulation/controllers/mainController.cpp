@@ -4,6 +4,9 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
+#include <random>
+#include <numbers>
+
 
 MainController::MainController(GLFWwindow *window):
     optionsPanel(*this),
@@ -99,6 +102,38 @@ void MainController::SetSteeringCubePosition(const glm::vec3 &position) {
 void MainController::SetSteeringCubeRotation(const glm::quat &rotation) {
     visualization.GetSteeringCube().SetRotation(rotation);
     UpdateSteeringMaterialPoints();
+}
+
+
+void MainController::DisturbSoftBody(const float maxDisturb)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution zeroTo2Pi(0.f, 2.f*std::numbers::pi_v<float>);
+    std::uniform_real_distribution minusOneToOne(-1.f, 1.f);
+    std::uniform_real_distribution zeroToMaxDisturb(0.f, maxDisturb);
+
+    auto& graph = model.StartWritingGraph();
+
+    for (int x=0; x < bezierPointsIds.SizeX(); x++) {
+        for (int y=0; y < bezierPointsIds.SizeY(); y++) {
+            for (int z=0; z < bezierPointsIds.SizeZ(); z++) {
+                const auto id = bezierPointsIds.At(x, y, z);
+
+                const float alpha = zeroTo2Pi(gen);
+                const float v = minusOneToOne(gen);
+                const float len = zeroToMaxDisturb(gen);
+
+                graph.GetMaterialPoint(id).velocity += glm::vec3(
+                    std::sqrt(1-v*v) * std::cos(alpha),
+                    std::sqrt(1-v*v) * std::sin(alpha),
+                    v
+                ) * len;
+            }
+        }
+    }
+
+    model.EndWritingGraph();
 }
 
 

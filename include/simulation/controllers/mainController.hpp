@@ -85,6 +85,8 @@ public:
     bool GetRenderCube() const
         { return visualization.renderCube; }
 
+    void DisturbSoftBody(float maxDisturb);
+
 private:
     static constexpr float initialMaterialPointMass = 1.f;
     static constexpr float steeringCubeEdgeLen = 0.2f;
@@ -100,7 +102,6 @@ private:
     Vector3D<MaterialPointId> bezierPointsIds;
     Vector3D<MaterialPointId> steeringPointsIds;
     Model model;
-
 
     [[nodiscard]]
     bool WantToCaptureMouse() const

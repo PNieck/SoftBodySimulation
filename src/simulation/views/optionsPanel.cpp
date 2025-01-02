@@ -11,7 +11,7 @@ OptionsPanel::OptionsPanel(MainController &controller):
 }
 
 
-void OptionsPanel::Render()
+void OptionsPanel::Render() const
 {
     ImGui::Begin(WindowName());
 
@@ -20,6 +20,7 @@ void OptionsPanel::Render()
     RenderStartStopButton();
     RenderSteeringCubeOptions();
     RenderVisualizationOptions();
+    RenderDisturbOptions();
     RenderSimulationInfo();
 
     ImGui::PopItemWidth();
@@ -105,6 +106,19 @@ void OptionsPanel::RenderVisualizationOptions() const
     if (ImGui::Checkbox("Render monkey", &value))
         controller.SetRenderMonkey(value);
 }
+
+
+void OptionsPanel::RenderDisturbOptions() const
+{
+    ImGui::SeparatorText("Disturb soft body");
+
+    static float maxDisturb = 5.f;
+    ImGui::DragFloat("Max Disturb", &maxDisturb, 0.01f);
+
+    if (ImGui::Button("Disturb"))
+        controller.DisturbSoftBody(maxDisturb);
+}
+
 
 void OptionsPanel::RenderSimulationInfo() const
 {
