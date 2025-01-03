@@ -120,6 +120,42 @@ void SpringsSimulation::UpdateRungeKutta() {
 }
 
 
+
+void SpringsSimulation::UpdateRungeKutta2()
+{
+    std::lock_guard guard(simulationMutex);
+
+    std::fill(v.begin(), v.end(), glm::vec3(0.f));
+    std::fill(p.begin(), p.end(), glm::vec3(0.f));
+
+    const float h = environment.deltaT;
+
+    for (int i=0; i < springGraph.GetNeighbours().size(); i++) {
+        auto& mp1 = springGraph.GetMaterialPoint(i);
+
+        if (mp1.mass == std::numeric_limits<float>::infinity())
+            continue;
+
+        glm::vec3 k1_v = CalculateForce(i, mp1.position, mp1.velocity) / mp1.mass;
+        glm::vec3 k1_p = mp1.velocity;
+
+        glm::vec3 k2_v = CalculateForce(i, mp1.position + 0.5f * h * k1_p, mp1.velocity + 0.5f * h * k1_v) / mp1.mass;
+        glm::vec3 k2_p = mp1.velocity + 0.5f * h * k1_v;
+
+        glm::vec3 k3_v = CalculateForce(i, mp1.position + 0.5f * h * k2_p, mp1.velocity + 0.5f * h * k2_v) / mp1.mass;
+        glm::vec3 k3_p = mp1.velocity + 0.5f * h * k2_v;
+
+        glm::vec3 k4_v = CalculateForce(i, mp1.position + h * k3_p, mp1.velocity + h * k3_v);
+        glm::vec3 k4_p = mp1.velocity + h * k3_v;
+
+        p[i] += h / 6.f * (k1_p + 2.f * k2_p + 2.f * k3_p + k4_p);
+        v[i] += h / 6.f * (k1_v + 2.f * k2_v + 2.f * k3_v + k4_v);
+    }
+
+    UpdatePositionsAndVelocities();
+}
+
+
 void SpringsSimulation::SetSimulationEnv(const SimulationEnvironment &environment)
 {
     this->environment = environment;
@@ -167,5 +203,22 @@ void SpringsSimulation::UpdatePositionsAndVelocities() {
 
         boxCollider.Collide(mp1.position, p[i], mp1.velocity);
     }
+}
+
+
+glm::vec3 SpringsSimulation::CalculateForce(const int i, const glm::vec3 &p, const glm::vec3 &v)
+{
+    glm::vec3 force(0.f);
+
+    for (const auto& neighbour: springGraph.GetNeighbours()[i]) {
+        const auto& mp2 = springGraph.GetMaterialPoint(neighbour.materialPoint);
+        const auto& spring = springGraph.GetSpring(neighbour.spring);
+
+        force += SpringForce(p, mp2.position, v, mp2.velocity, spring.springCoef, spring.restLength);
+    }
+
+    force += ViscousDampingForce(v);
+
+    return force;
 }
 

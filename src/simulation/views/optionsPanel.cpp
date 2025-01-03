@@ -159,10 +159,10 @@ void OptionsPanel::RenderSimulationOptions(const bool simRuns) const
     }
 
     ImGui::Text("Simulation area");
-    envChanged |= ImGui::DragFloat("##simulationArea", &env.simulationAreaEdgeLength, 0.1, 0.2, 10.f);
+    envChanged |= ImGui::DragFloat("##simulationArea", &env.simulationAreaEdgeLength, 0.1f, 0.2f, 10.f);
 
     ImGui::Text("Simulation delta time");
-    envChanged |= ImGui::DragFloat("##deltaTime", &env.deltaT, 0.001f, 0.001, 0.1f);
+    envChanged |= ImGui::DragFloat("##deltaTime", &env.deltaT, 0.001f, 0.001f, 0.1f);
 
     if (envChanged)
         controller.SetSimulationEnvironment(env);

@@ -19,6 +19,7 @@ public:
 
     void UpdateEuler();
     void UpdateRungeKutta();
+    void UpdateRungeKutta2();
 
     const SpringGraph& StartReadingGraph() {
         simulationMutex.lock();
@@ -39,6 +40,7 @@ public:
 
     void SetSimulationEnv(const SimulationEnvironment& environment);
 
+    [[nodiscard]]
     const SimulationEnvironment& GetSimulationEnv() const
         { return environment; }
 
@@ -60,4 +62,6 @@ private:
     static float DotI(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& v1, const glm::vec3& v2);
 
     void UpdatePositionsAndVelocities();
+
+    glm::vec3 CalculateForce(int i, const glm::vec3& p, const glm::vec3& v);
 };
