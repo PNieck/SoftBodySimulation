@@ -102,6 +102,11 @@ public:
 
     void SetSimulationEnvironment(const SimulationEnvironment& environment);
 
+    float GetMaterialPointMass() const
+        { return materialPointMass; }
+
+    void SetMaterialPointMass(float mass);
+
 private:
     static constexpr float initialMaterialPointMass = 1.f;
     static constexpr float steeringCubeEdgeLen = 0.2f;
@@ -122,6 +127,7 @@ private:
 
     float bezierSpringCoef = initialBezierSpringsCoef;
     float steeringSpringCoef = initialSteeringSpringsCoef;
+    float materialPointMass = initialMaterialPointMass;
 
     [[nodiscard]]
     bool WantToCaptureMouse() const

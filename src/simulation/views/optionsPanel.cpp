@@ -167,6 +167,11 @@ void OptionsPanel::RenderSimulationOptions(const bool simRuns) const
     if (envChanged)
         controller.SetSimulationEnvironment(env);
 
+    value = controller.GetMaterialPointMass();
+    ImGui::Text("Material points mass");
+    if (ImGui::DragFloat("##materialPointMass", &value, 1.0f, 0.01f, 100.f))
+        controller.SetMaterialPointMass(value);
+
     ImGui::EndDisabled();
 }
 

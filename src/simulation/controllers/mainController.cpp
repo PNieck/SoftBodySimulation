@@ -170,6 +170,25 @@ void MainController::SetSimulationEnvironment(const SimulationEnvironment &envir
 }
 
 
+void MainController::SetMaterialPointMass(const float mass)
+{
+    materialPointMass = mass;
+
+    auto& graph = model.StartWritingGraph();
+
+    for (int x=0; x < bezierPointsIds.SizeX(); x++) {
+        for (int y=0; y < bezierPointsIds.SizeY(); y++) {
+            for (int z=0; z < bezierPointsIds.SizeZ(); z++) {
+                const auto id = bezierPointsIds.At(x, y, z);
+                graph.GetMaterialPoint(id).mass = mass;
+            }
+        }
+    }
+
+    model.EndWritingGraph();
+}
+
+
 SpringGraph MainController::InitialSpringGraph() {
     constexpr int bezierSpringsCnt = 396;
     constexpr int steeringSpringsCnt = 8;
