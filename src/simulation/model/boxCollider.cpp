@@ -6,42 +6,42 @@
 
 void BoxCollider::Collide(glm::vec3 &newPos, const glm::vec3 &deltaPos, glm::vec3 &newVel) const
 {
-    if (newPos.x > maxCoordinate) {
+    if (newPos.x > maxCoordinate && deltaPos.x > 0.f) {
         const Plane wall(glm::vec3(maxCoordinate, 0.f, 0.f), glm::vec3(-1.f, 0.f, 0.f));
         const glm::vec3 newDeltaPos = CalculateCollisionResult(newPos, deltaPos, wall);
 
         newVel.x = -newVel.x * collisionDampingCoef;
         Collide(newPos, newDeltaPos, newVel);
     }
-    else if (newPos.x < -maxCoordinate) {
+    else if (newPos.x < -maxCoordinate && deltaPos.x < 0.f) {
         const Plane wall(glm::vec3(-maxCoordinate, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
         const glm::vec3 newDeltaPos = CalculateCollisionResult(newPos, deltaPos, wall);
 
         newVel.x = -newVel.x * collisionDampingCoef;
         Collide(newPos, newDeltaPos, newVel);
     }
-    else if (newPos.y > maxCoordinate) {
+    else if (newPos.y > maxCoordinate && deltaPos.y > 0.f) {
         const Plane wall(glm::vec3(0.f, maxCoordinate, 0.f), glm::vec3(0.f, -1.f, 0.f));
         const glm::vec3 newDeltaPos = CalculateCollisionResult(newPos, deltaPos, wall);
 
         newVel.y = -newVel.y * collisionDampingCoef;
         Collide(newPos, newDeltaPos, newVel);
     }
-    else if (newPos.y < -maxCoordinate) {
+    else if (newPos.y < -maxCoordinate && deltaPos.y < 0.f) {
         const Plane wall(glm::vec3(0.f, -maxCoordinate, 0.f), glm::vec3(0.f, 1.f, 0.f));
         const glm::vec3 newDeltaPos = CalculateCollisionResult(newPos, deltaPos, wall);
 
         newVel.y = -newVel.y * collisionDampingCoef;
         Collide(newPos, newDeltaPos, newVel);
     }
-    else if (newPos.z > maxCoordinate) {
+    else if (newPos.z > maxCoordinate && deltaPos.z > 0.f) {
         const Plane wall(glm::vec3(0.f, 0.f, maxCoordinate), glm::vec3(0.f, 0.f, -1.f));
         const glm::vec3 newDeltaPos = CalculateCollisionResult(newPos, deltaPos, wall);
 
         newVel.z = -newVel.z * collisionDampingCoef;
         Collide(newPos, newDeltaPos, newVel);
     }
-    else if (newPos.z < -maxCoordinate) {
+    else if (newPos.z < -maxCoordinate && deltaPos.z < 0.f) {
         const Plane wall(glm::vec3(0.f, 0.f, -maxCoordinate), glm::vec3(0.f, 0.f, 1.f));
         const glm::vec3 newDeltaPos = CalculateCollisionResult(newPos, deltaPos, wall);
 
