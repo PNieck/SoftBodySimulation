@@ -2,8 +2,6 @@
 
 #include <glad/glad.h>
 
-#include "imgui.h"
-
 
 class Framebuffer {
 public:
