@@ -47,7 +47,7 @@ private:
 };
 
 
-class UniformNotFoundInShader final : std::exception {
+class UniformNotFoundInShader final : public std::exception {
 public:
     [[nodiscard]]
     const char * what() const noexcept override;
